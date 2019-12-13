@@ -1,6 +1,6 @@
 #include "expression.h"
 
-TMathExpression::TMathExpression(TMathExpression* left_expr, TMathExpression* right_expr, char operation) :
+TMathExpression::TMathExpression(TMathExpression_ptr left_expr, TMathExpression_ptr right_expr, char operation) :
         _left_expr(left_expr),
         _right_expr(right_expr),
         _operation(operation)
@@ -42,7 +42,7 @@ number_t TNumber::calculate(dictionary_t& dictionary) {
     return _number;
 }
 
-TBoolExpression::TBoolExpression(TMathExpression* left_expr, TMathExpression* right_expr, EBoolOperation operation) :
+TBoolExpression::TBoolExpression(TMathExpression_ptr left_expr, TMathExpression_ptr right_expr, EBoolOperator operation) :
         _left_expr(left_expr),
         _right_expr(right_expr),
         _operation(operation)

@@ -1,20 +1,29 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "cfg.h"
 
+struct TMathExpression;
+struct TBoolExpression;
+
+typedef std::shared_ptr<TMathExpression> TMathExpression_ptr;
+typedef std::shared_ptr<TBoolExpression> TBoolExpression_ptr;
+
+
 struct TMathExpression {
     TMathExpression();
-    TMathExpression(TMathExpression* left_expr, TMathExpression* right_expr, char operation);
+    TMathExpression(TMathExpression_ptr left_expr, TMathExpression_ptr right_expr, char operation);
     virtual number_t calculate(dictionary_t& dictionary);
     virtual ~TMathExpression() {}
 
 private:
-    TMathExpression* _left_expr;
-    TMathExpression* _right_expr;
-    char             _operation;
+    TMathExpression_ptr _left_expr;
+    TMathExpression_ptr _right_expr;
+    char                _operation;
 };
+
 
 struct TVariable : public TMathExpression {
     TVariable(const std::string& variable);
@@ -33,7 +42,7 @@ private:
 };
 
 struct TBoolExpression {
-    enum EBoolOperation {
+    enum EBoolOperator {
         EQUAL,
         NOT_EQUAL,
         LESS,
@@ -42,11 +51,11 @@ struct TBoolExpression {
         GREATER_OR_EQUAL
     };
 
-    TBoolExpression(TMathExpression* left_expr, TMathExpression* right_expr, EBoolOperation operation);
+    TBoolExpression(TMathExpression_ptr left_expr, TMathExpression_ptr right_expr, EBoolOperator operation);
     bool calculate(dictionary_t& dictionary);
 
 private:
-    TMathExpression* _left_expr;
-    TMathExpression* _right_expr;
-    EBoolOperation   _operation;
+    TMathExpression_ptr _left_expr;
+    TMathExpression_ptr _right_expr;
+    EBoolOperator       _operation;
 };

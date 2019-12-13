@@ -6,11 +6,11 @@
 #include "expression.h"
 
 struct TNode {
-    TOperation*                     operation;
-    TOperations                     operations;
-    TMathExpression*                math_expression;
-    TBoolExpression*                bool_expression;
-    TBoolExpression::EBoolOperation bool_operation;
-    variable_t                      variable;
-    number_t                        number;
+    TOperation_ptr                 operation;
+    TOperations                    operations;
+    TMathExpression_ptr            math_expression;
+    TBoolExpression_ptr            bool_expression;
+    TBoolExpression::EBoolOperator bool_operator;
+    variable_t                     variable;
+    number_t                       number;
 };

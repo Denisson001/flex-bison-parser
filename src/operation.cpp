@@ -2,7 +2,7 @@
 
 #include "operation.h"
 
-void TOperations::addOperation(TOperation* operation) {
+void TOperations::addOperation(TOperation_ptr operation) {
     _operations.push_back(operation);
 }
 
@@ -14,7 +14,7 @@ void TOperations::executeAll(dictionary_t& dictionary) {
 
 
 
-TPrint:: TPrint(TMathExpression* math_expr) :
+TPrint:: TPrint(TMathExpression_ptr math_expr) :
         _math_expr(math_expr)
 {}
 
@@ -24,7 +24,7 @@ void TPrint::execute(dictionary_t& dictionary){
 
 
 
-TAssign::TAssign(const variable_t& variable, TMathExpression* math_expr) :
+TAssign::TAssign(const variable_t& variable, TMathExpression_ptr math_expr) :
         _variable(variable),
         _math_expr(math_expr)
 {}
@@ -35,7 +35,7 @@ void TAssign::execute(dictionary_t& dictionary) {
 
 
 
-TIfBlock::TIfBlock(TBoolExpression* bool_expr, TOperations operations_if_true, TOperations operations_if_false) :
+TIfBlock::TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false) :
         _bool_expr(bool_expr),
         _operations_if_true(operations_if_true),
         _operations_if_false(operations_if_false)

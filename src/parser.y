@@ -28,71 +28,71 @@
 %type<operations>      OPERATIONS UNIT
 %type<math_expression> MATH_EXPR ADD_EXPR MULT_EXPR TERM
 %type<bool_expression> BOOL_EXPR
-%type<bool_operation>  BOOL_OPERATION
+%type<bool_operator>   BOOL_OPERATOR
 
 %%
 
-PROGRAM:        UNIT                                   { interpreter.setOperations($1); }
+PROGRAM:       UNIT                                   { interpreter.setOperations($1); }
 ;
 
-UNIT:           '{' OPERATIONS '}'                     { $$ = $2; }
-|               '{' '}'                                { $$ = TOperations(); }
+UNIT:          '{' OPERATIONS '}'                     { $$ = $2; }
+|              '{' '}'                                { $$ = TOperations(); }
 
-OPERATIONS:     OPERATION                              {
+OPERATIONS:    OPERATION                              {
                                                          $$ = TOperations();
                                                          $$.addOperation($1);
                                                        }
-|               OPERATIONS OPERATION                   {
+|              OPERATIONS OPERATION                   {
                                                          $1.addOperation($2);
                                                          $$ = $1;
                                                        }
 ;
 
-OPERATION:      PRINT                                  { $$ = $1; }
-|               ASSIGN                                 { $$ = $1; }
-|               IF                                     { $$ = $1; }
+OPERATION:     PRINT                                  { $$ = $1; }
+|              ASSIGN                                 { $$ = $1; }
+|              IF                                     { $$ = $1; }
 ;
 
-ASSIGN:         VARIABLE '=' MATH_EXPR ';'             { $$ = new TAssign($1, $3); }
+ASSIGN:        VARIABLE '=' MATH_EXPR ';'             { $$ = std::make_shared<TAssign>($1, $3); }
 ;
 
-VARIABLE:       _VARIABLE                              { $$ = yylval.variable; }
+VARIABLE:      _VARIABLE                              { $$ = yylval.variable; }
 ;
 
-PRINT:          _PRINT '(' MATH_EXPR ')' ';'           { $$ = new TPrint($3); }
+PRINT:         _PRINT '(' MATH_EXPR ')' ';'           { $$ = std::make_shared<TPrint>($3); }
 ;
 
-MATH_EXPR:      MATH_EXPR '+' ADD_EXPR                 { $$ = new TMathExpression($1, $3, '+'); }
-|               MATH_EXPR '-' ADD_EXPR                 { $$ = new TMathExpression($1, $3, '-'); }
-|               ADD_EXPR                               { $$ = $1; }
+MATH_EXPR:     MATH_EXPR '+' ADD_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '+'); }
+|              MATH_EXPR '-' ADD_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '-'); }
+|              ADD_EXPR                               { $$ = $1; }
 ;
 
-ADD_EXPR:       ADD_EXPR '*' MULT_EXPR                 { $$ = new TMathExpression($1, $3, '*'); }
-|               ADD_EXPR '/' MULT_EXPR                 { $$ = new TMathExpression($1, $3, '/'); }
-|               MULT_EXPR                              { $$ = $1; }
+ADD_EXPR:      ADD_EXPR '*' MULT_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '*'); }
+|              ADD_EXPR '/' MULT_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '/'); }
+|              MULT_EXPR                              { $$ = $1; }
 ;
 
-MULT_EXPR:      '(' MATH_EXPR ')'                      { $$ = $2; }
-|               TERM                                   { $$ = $1; }
+MULT_EXPR:     '(' MATH_EXPR ')'                      { $$ = $2; }
+|              TERM                                   { $$ = $1; }
 ;
 
-TERM:           _VARIABLE                              { $$ = new TVariable(yylval.variable); }
-|               _NUMBER                                { $$ = new TNumber(yylval.number); }
+TERM:          _VARIABLE                              { $$ = std::make_shared<TVariable>(yylval.variable); }
+|              _NUMBER                                { $$ = std::make_shared<TNumber>(yylval.number); }
 ;
 
-IF:             _IF '(' BOOL_EXPR ')' UNIT             { $$ = new TIfBlock($3, $5, TOperations()); }
-|               _IF '(' BOOL_EXPR ')' UNIT _ELSE UNIT  { $$ = new TIfBlock($3, $5, $7); }
+IF:            _IF '(' BOOL_EXPR ')' UNIT             { $$ = std::make_shared<TIfBlock>($3, $5, TOperations()); }
+|              _IF '(' BOOL_EXPR ')' UNIT _ELSE UNIT  { $$ = std::make_shared<TIfBlock>($3, $5, $7); }
 ;
 
-BOOL_EXPR:      MATH_EXPR BOOL_OPERATION MATH_EXPR     { $$ = new TBoolExpression($1, $3, $2); }
+BOOL_EXPR:     MATH_EXPR BOOL_OPERATOR MATH_EXPR      { $$ = std::make_shared<TBoolExpression>($1, $3, $2); }
 ;
 
-BOOL_OPERATION: _EQ                                    { $$ = TBoolExpression::EBoolOperation::EQUAL; }
-|               _NE                                    { $$ = TBoolExpression::EBoolOperation::NOT_EQUAL; }
-|               _LT                                    { $$ = TBoolExpression::EBoolOperation::LESS; }
-|               _LE                                    { $$ = TBoolExpression::EBoolOperation::LESS_OR_EQUAL; }
-|               _GT                                    { $$ = TBoolExpression::EBoolOperation::GREATER; }
-|               _GE                                    { $$ = TBoolExpression::EBoolOperation::GREATER_OR_EQUAL; }
+BOOL_OPERATOR: _EQ                                    { $$ = TBoolExpression::EBoolOperator::EQUAL; }
+|              _NE                                    { $$ = TBoolExpression::EBoolOperator::NOT_EQUAL; }
+|              _LT                                    { $$ = TBoolExpression::EBoolOperator::LESS; }
+|              _LE                                    { $$ = TBoolExpression::EBoolOperator::LESS_OR_EQUAL; }
+|              _GT                                    { $$ = TBoolExpression::EBoolOperator::GREATER; }
+|              _GE                                    { $$ = TBoolExpression::EBoolOperator::GREATER_OR_EQUAL; }
 ;
 
 %%
