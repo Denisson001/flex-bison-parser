@@ -1,17 +1,9 @@
 #include "interpreter.h"
 
-void TInterpreter:: addOperation(TOperation* operation) {
-    _operations.push_back(operation);
+void TInterpreter:: setOperations(TOperations operations) {
+    _operations = operations;
 }
 
 void TInterpreter:: interpret() {
-    for (auto operation : _operations) {
-        operation->calculate(_dictionary);
-    }
-}
-
-TInterpreter:: ~TInterpreter() {
-    for (auto operation : _operations) {
-        delete operation;
-    }
+    _operations.executeAll(_dictionary);
 }

@@ -1,10 +1,14 @@
 {
-    print((1213-2)/3);
-    b = 2;
-    a = 123 - b;
-    c = a * b;
+    b = 7;
+    a = 5 * 3 - (1 + b) * 3;
     print(a);
-    print(((c + a)));
-    print(sadsad2);
-    print(sadsad3);
+    print(b);
+    if (a + 1 < b) {
+        print(1);
+        if (0 == 0) {
+            print(1111);
+        }
+    } else {
+        print(2);
+    }
 }

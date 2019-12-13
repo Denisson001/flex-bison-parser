@@ -47,7 +47,15 @@ extern int yydebug;
   {
     _VARIABLE = 258,
     _NUMBER = 259,
-    _PRINT = 260
+    _PRINT = 260,
+    _IF = 261,
+    _ELSE = 262,
+    _EQ = 263,
+    _NE = 264,
+    _LT = 265,
+    _LE = 266,
+    _GT = 267,
+    _GE = 268
   };
 #endif
 

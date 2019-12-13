@@ -3,18 +3,15 @@
 #include <vector>
 
 #include "operation.h"
+#include "node.h"
 
 class TInterpreter {
 public:
-
-    void addOperation(TOperation* operation);
+    void setOperations(TOperations operations);
     void interpret();
-    ~TInterpreter();
 
 private:
-    typedef std::vector<TOperation*> _TOperations;
-
-    _TOperations _operations;
+    TOperations  _operations;
     dictionary_t _dictionary;
 };
 

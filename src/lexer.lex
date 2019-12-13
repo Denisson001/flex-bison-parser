@@ -17,6 +17,16 @@
                   return _NUMBER;
                 }
 
+==              { return _EQ; }
+!=              { return _NE; }
+[<]             { return _LT; } // Wtf?!?!?
+[<]=            { return _LE; }
+>               { return _GE; }
+>=              { return _GT; }
+
+if              {return _IF; }
+else            {return _ELSE; }
+
 print           {
                     return _PRINT;
                 }

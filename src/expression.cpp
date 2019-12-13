@@ -41,3 +41,29 @@ TNumber::TNumber(number_t number) :
 number_t TNumber::calculate(dictionary_t& dictionary) {
     return _number;
 }
+
+TBoolExpression::TBoolExpression(TMathExpression* left_expr, TMathExpression* right_expr, EBoolOperation operation) :
+        _left_expr(left_expr),
+        _right_expr(right_expr),
+        _operation(operation)
+{}
+
+bool TBoolExpression::calculate(dictionary_t& dictionary) {
+    const auto left_result  = _left_expr->calculate(dictionary);
+    const auto right_result = _right_expr->calculate(dictionary);
+    switch (_operation) {
+        case EQUAL:
+            return left_result == right_result;
+        case NOT_EQUAL:
+            return left_result != right_result;
+        case LESS:
+            return left_result <  right_result;
+        case LESS_OR_EQUAL:
+            return left_result <= right_result;
+        case GREATER:
+            return left_result >  right_result;
+        case GREATER_OR_EQUAL:
+            return left_result >= right_result;
+    }
+}
+
