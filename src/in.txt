@@ -1,0 +1,10 @@
+{
+    print((1213-2)/3);
+    b = 2;
+    a = 123 - b;
+    c = a * b;
+    print(a);
+    print(((c + a)));
+    print(sadsad2);
+    print(sadsad3);
+}
