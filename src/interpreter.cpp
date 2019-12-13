@@ -1,9 +1,9 @@
 #include "interpreter.h"
 
-void TInterpreter:: setOperations(TOperations operations) {
+void TInterpreter::setOperations(TOperations operations) {
     _operations = operations;
 }
 
-void TInterpreter:: interpret() {
+void TInterpreter::interpret() {
     _operations.executeAll(_dictionary);
 }

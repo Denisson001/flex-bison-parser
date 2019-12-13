@@ -2,9 +2,10 @@
    #include <string>
 
    #include "node.h"
-
    #define YYSTYPE TNode
+
    #include "parser.tab.h"
+
    void yyerror(char *s);
 %}
 
@@ -13,29 +14,31 @@
 
 %%
 
-[0-9]+          { yylval.number = std::stoll(yytext);
-                  return _NUMBER;
-                }
+[0-9]+                 {
+                         yylval.number = std::stoll(yytext);
+                         return _NUMBER;
+                       }
 
-==              { return _EQ; }
-!=              { return _NE; }
-[<]             { return _LT; } // Wtf?!?!?
-[<]=            { return _LE; }
->               { return _GE; }
->=              { return _GT; }
+==                     { return _EQ; }
+!=                     { return _NE; }
+>                      { return _GE; }
+>=                     { return _GT; }
+[<]                    { return _LT; }
+[<]=                   { return _LE; }
 
-if              {return _IF; }
-else            {return _ELSE; }
+if                     { return _IF; }
+else                   { return _ELSE; }
+print                  { return _PRINT; }
 
-print           {
-                    return _PRINT;
-                }
-
-[a-zA-Z_][a-zA-Z0-9_]* { yylval.variable = yytext;
+[a-zA-Z_][a-zA-Z0-9_]* {
+                         yylval.variable = yytext;
                          return _VARIABLE;
                        }
-[-+*/{}=;()] { return *yytext; }
-[ \t\r\n]       ; // whitespace
-.               yyerror("Invalid character");
+
+[-+*/{}=;()]           { return *yytext; }
+
+[ \t\r\n]              ;
+
+.                      yyerror("Invalid character");
 
 %%
