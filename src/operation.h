@@ -11,45 +11,45 @@ typedef std::shared_ptr<TOperation> TOperation_ptr;
 
 
 struct TOperation {
-    virtual void execute(dictionary_t& dictionary) = 0;
+    virtual void execute(TDictionary& dictionary) = 0;
     virtual ~TOperation() {}
 };
 
 struct TOperations {
     void addOperation(TOperation_ptr operation);
-    void executeAll(dictionary_t& dictionary);
+    void executeAll(TDictionary& dictionary);
 private:
     std::list<TOperation_ptr> _operations;
 };
 
 struct TPrint : public TOperation {
     TPrint(TMathExpression_ptr math_expr);
-    void execute(dictionary_t& dictionary);
+    void execute(TDictionary& dictionary);
 
 private:
     TMathExpression_ptr _math_expr;
 };
 
 struct TRead : public TOperation {
-    TRead(const variable_t& variable);
-    void execute(dictionary_t& dictionary);
+    TRead(const TVariable<number_t>& variable);
+    void execute(TDictionary& dictionary);
 
 private:
-    variable_t _variable;
+    TVariable<number_t> _variable;
 };
 
 struct TAssign : public TOperation {
-    TAssign(const variable_t& variable, TMathExpression_ptr math_expr);
-    void execute(dictionary_t& dictionary);
+    TAssign(const TVariable<number_t>& variable, TMathExpression_ptr math_expr);
+    void execute(TDictionary& dictionary);
 
 private:
     TMathExpression_ptr _math_expr;
-    variable_t          _variable;
+    TVariable<number_t> _variable;
 };
 
 struct TIfBlock : public TOperation {
     TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false);
-    void execute(dictionary_t& dictionary);
+    void execute(TDictionary& dictionary);
 
 private:
     TOperations         _operations_if_true;
@@ -59,7 +59,7 @@ private:
 
 struct TWhileBlock : public TOperation {
     TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations);
-    void execute(dictionary_t& dictionary);
+    void execute(TDictionary& dictionary);
 
 private:
     TOperations         _operations;

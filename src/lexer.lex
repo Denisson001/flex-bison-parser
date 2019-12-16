@@ -21,10 +21,10 @@
 
 ==                     { return _EQ; }
 !=                     { return _NE; }
->                      { return _GT; }
 >=                     { return _GE; }
-[<]                    { return _LT; }
+>                      { return _GT; }
 [<]=                   { return _LE; }
+[<]                    { return _LT; }
 
 if                     { return _IF; }
 else                   { return _ELSE; }
@@ -33,7 +33,7 @@ read                   { return _READ; }
 while                  { return _WHILE; }
 
 [a-zA-Z_][a-zA-Z0-9_]* {
-                         yylval.variable = yytext;
+                         yylval.number_variable = TVariable<number_t>(yytext);
                          return _VARIABLE;
                        }
 

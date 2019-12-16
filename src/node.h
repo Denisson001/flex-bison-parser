@@ -11,6 +11,7 @@ struct TNode {
     TMathExpression_ptr            math_expression;
     TBoolExpression_ptr            bool_expression;
     TBoolExpression::EBoolOperator bool_operator;
-    variable_t                     variable;
+    TVariable<number_t>            number_variable;
+    TVariable<string_t>            string_variable;
     number_t                       number;
 };

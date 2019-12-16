@@ -1,11 +1,11 @@
 {
-    print(123);
     read(n);
     sum = 0;
     while (n > 0) {
         read(a_i);
-        sum += a_i;
+        sum = sum + a_i;
         n = n - 1;
+        n_s = 12;
     }
     print(sum);
 }

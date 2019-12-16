@@ -11,7 +11,7 @@ private:
     int _buildAST(char* program_filename);
     void _interpret();
 
-    TOperations  _operations;
-    dictionary_t _dictionary;
+    TOperations _operations;
+    TDictionary _dictionary;
 };
 

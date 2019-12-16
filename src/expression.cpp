@@ -11,7 +11,7 @@ TMathExpression::TMathExpression() :
         _right_expr(NULL)
 {}
 
-number_t TMathExpression::calculate(dictionary_t& dictionary) {
+number_t TMathExpression::calculate(TDictionary& dictionary) {
     const auto left_result  = _left_expr->calculate(dictionary);
     const auto right_result = _right_expr->calculate(dictionary);
     switch (_operation) {
@@ -28,19 +28,19 @@ number_t TMathExpression::calculate(dictionary_t& dictionary) {
     }
 }
 
-TVariable::TVariable(const std::string& variable) :
+TMathVariable::TMathVariable(const TVariable<number_t>& variable) :
     _variable(variable)
 {}
 
-number_t TVariable::calculate(dictionary_t& dictionary) {
+number_t TMathVariable::calculate(TDictionary& dictionary) {
     return dictionary[_variable];
 }
 
-TNumber::TNumber(number_t number) :
+TMathNumber::TMathNumber(number_t number) :
     _number(number)
 {}
 
-number_t TNumber::calculate(dictionary_t& dictionary) {
+number_t TMathNumber::calculate(TDictionary& dictionary) {
     return _number;
 }
 
@@ -50,7 +50,7 @@ TBoolExpression::TBoolExpression(TMathExpression_ptr left_expr, TMathExpression_
         _operation(operation)
 {}
 
-bool TBoolExpression::calculate(dictionary_t& dictionary) {
+bool TBoolExpression::calculate(TDictionary& dictionary) {
     const auto left_result  = _left_expr->calculate(dictionary);
     const auto right_result = _right_expr->calculate(dictionary);
     switch (_operation) {
