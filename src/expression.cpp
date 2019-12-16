@@ -23,6 +23,8 @@ number_t TMathExpression::calculate(dictionary_t& dictionary) {
             return left_result * right_result;
         case '/':
             return left_result / right_result;
+        case '%':
+            return left_result % right_result;
     }
 }
 

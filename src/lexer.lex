@@ -21,24 +21,25 @@
 
 ==                     { return _EQ; }
 !=                     { return _NE; }
->                      { return _GE; }
->=                     { return _GT; }
+>                      { return _GT; }
+>=                     { return _GE; }
 [<]                    { return _LT; }
 [<]=                   { return _LE; }
 
 if                     { return _IF; }
 else                   { return _ELSE; }
 print                  { return _PRINT; }
+while                  { return _WHILE; }
 
 [a-zA-Z_][a-zA-Z0-9_]* {
                          yylval.variable = yytext;
                          return _VARIABLE;
                        }
 
-[-+*/{}=;()]           { return *yytext; }
+[-+*/%{}()=;]          { return *yytext; }
 
 [ \t\r\n]              ;
 
-.                      yyerror("Invalid character");
+.                      { yyerror("Invalid character"); }
 
 %%

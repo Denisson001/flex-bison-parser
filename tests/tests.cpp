@@ -15,11 +15,9 @@
 struct TCfg {
     std::vector<std::string> dirs;
     std::vector<uint32_t>    test_cnt;
-    static const std::string solver_output;
+    std::string              solver_output;
     std::string              solver_name;
 };
-
-const std::string TCfg::solver_output = "solver_out.txt";
 
 /*
  * Структура результата сравнения файлов
@@ -45,11 +43,16 @@ TCfg readCfg() {
         std::string header;
         std::string item;
         cfg_stream >> header;
+        if (!header.empty()) {
+            header.pop_back();
+        }
         while(cfg_stream >> item) {
-            if (header == "dirs:") {
+            if (header == "dirs") {
                 cfg.dirs.push_back(item);
-            } else if (header == "solver_name:") {
+            } else if (header == "solver_name") {
                 cfg.solver_name = item;
+            } else if (header == "solver_output") {
+                cfg.solver_output = item;
             } else { // test_count:
                 cfg.test_cnt.push_back(std::stoi(item));
             }

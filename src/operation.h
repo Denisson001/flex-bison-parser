@@ -48,3 +48,12 @@ private:
     TOperations         _operations_if_false;
     TBoolExpression_ptr _bool_expr;
 };
+
+struct TWhileBlock : public TOperation {
+    TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations);
+    void execute(dictionary_t& dictionary);
+
+private:
+    TOperations         _operations;
+    TBoolExpression_ptr _bool_expr;
+};

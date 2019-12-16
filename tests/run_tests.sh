@@ -9,5 +9,6 @@ cd ../tests
 g++ -std=c++11 tests.cpp -o tests
 ./tests
 
+rm solver_output.txt
 rm solver
 rm tests

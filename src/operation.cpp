@@ -48,3 +48,16 @@ void TIfBlock::execute(dictionary_t& dictionary) {
         _operations_if_false.executeAll(dictionary);
     }
 }
+
+
+
+TWhileBlock::TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations) :
+        _bool_expr(bool_expr),
+        _operations(operations)
+{}
+
+void TWhileBlock::execute(dictionary_t& dictionary) {
+    while (_bool_expr->calculate(dictionary)) {
+        _operations.executeAll(dictionary);
+    }
+}
