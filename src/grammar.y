@@ -53,29 +53,29 @@ OPERATION:     PRINT                                  { $$ = $1; }
 |              WHILE                                  { $$ = $1; }
 ;
 
-ASSIGN:        VARIABLE '=' MATH_EXPR ';'             { $$ = std::make_shared<TAssign>($1, $3); }
+ASSIGN:        VARIABLE '=' MATH_EXPR ';'             { $$ = std::make_shared< TAssign<number_t> >($1, $3); }
 ;
 
 VARIABLE:      _VARIABLE                              { $$ = yylval.number_variable; }
 ;
 
-PRINT:         _PRINT '(' MATH_EXPR ')' ';'           { $$ = std::make_shared<TPrint>($3); }
+PRINT:         _PRINT '(' MATH_EXPR ')' ';'           { $$ = std::make_shared< TPrint<number_t> >($3); }
 ;
 
-READ:          _READ '(' VARIABLE ')' ';'             { $$ = std::make_shared<TRead>($3); }
+READ:          _READ '(' VARIABLE ')' ';'             { $$ = std::make_shared< TRead<number_t> >($3); }
 ;
 
-MATH_EXPR:     MATH_EXPR '+' ADD_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '+'); }
-|              MATH_EXPR '-' ADD_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '-'); }
+MATH_EXPR:     MATH_EXPR '+' ADD_EXPR                 { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::PLUS); }
+|              MATH_EXPR '-' ADD_EXPR                 { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MINUS); }
 |              ADD_EXPR                               { $$ = $1; }
 ;
 
-ADD_EXPR:      ADD_EXPR '*' MULT_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '*'); }
-|              ADD_EXPR '/' MULT_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '/'); }
+ADD_EXPR:      ADD_EXPR '*' MULT_EXPR                 { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MULT); }
+|              ADD_EXPR '/' MULT_EXPR                 { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::DIV); }
 |              MULT_EXPR                              { $$ = $1; }
 ;
 
-MULT_EXPR:     MULT_EXPR '%' MODULO_EXPR               { $$ = std::make_shared<TMathExpression>($1, $3, '%'); }
+MULT_EXPR:     MULT_EXPR '%' MODULO_EXPR               { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MOD); }
 |              MODULO_EXPR                             { $$ = $1; }
 ;
 
@@ -83,23 +83,23 @@ MODULO_EXPR:  '(' MATH_EXPR ')'                       { $$ = $2; }
 |              TERM                                   { $$ = $1; }
 ;
 
-TERM:          _VARIABLE                              { $$ = std::make_shared<TMathVariable>(yylval.number_variable); }
-|              _NUMBER                                { $$ = std::make_shared<TMathNumber>(yylval.number); }
+TERM:          _VARIABLE                              { $$ = std::make_shared< TExprVariable<number_t> >(yylval.number_variable); }
+|              _NUMBER                                { $$ = std::make_shared< TExprValue<number_t> >(yylval.number); }
 ;
 
 IF:            _IF '(' BOOL_EXPR ')' UNIT             { $$ = std::make_shared<TIfBlock>($3, $5, TOperations()); }
 |              _IF '(' BOOL_EXPR ')' UNIT _ELSE UNIT  { $$ = std::make_shared<TIfBlock>($3, $5, $7); }
 ;
 
-BOOL_EXPR:     MATH_EXPR BOOL_OPERATOR MATH_EXPR      { $$ = std::make_shared<TBoolExpression>($1, $3, $2); }
+BOOL_EXPR:     MATH_EXPR BOOL_OPERATOR MATH_EXPR      { $$ = std::make_shared< TExpression<bool_t> >($1, $3, $2); }
 ;
 
-BOOL_OPERATOR: _EQ                                    { $$ = TBoolExpression::EBoolOperator::EQUAL; }
-|              _NE                                    { $$ = TBoolExpression::EBoolOperator::NOT_EQUAL; }
-|              _LT                                    { $$ = TBoolExpression::EBoolOperator::LESS; }
-|              _LE                                    { $$ = TBoolExpression::EBoolOperator::LESS_OR_EQUAL; }
-|              _GT                                    { $$ = TBoolExpression::EBoolOperator::GREATER; }
-|              _GE                                    { $$ = TBoolExpression::EBoolOperator::GREATER_OR_EQUAL; }
+BOOL_OPERATOR: _EQ                                    { $$ = EBoolOperator::EQUAL; }
+|              _NE                                    { $$ = EBoolOperator::NOT_EQUAL; }
+|              _LT                                    { $$ = EBoolOperator::LESS; }
+|              _LE                                    { $$ = EBoolOperator::LESS_OR_EQUAL; }
+|              _GT                                    { $$ = EBoolOperator::GREATER; }
+|              _GE                                    { $$ = EBoolOperator::GREATER_OR_EQUAL; }
 ;
 
 WHILE:         _WHILE '(' BOOL_EXPR ')' UNIT          { $$ = std::make_shared<TWhileBlock>($3, $5); }

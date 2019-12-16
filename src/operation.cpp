@@ -2,6 +2,10 @@
 
 #include "operation.h"
 
+template class TPrint<number_t>;
+template class TAssign<number_t>;
+template class TRead<number_t>;
+
 void TOperations::addOperation(TOperation_ptr operation) {
     _operations.push_back(operation);
 }
@@ -14,33 +18,38 @@ void TOperations::executeAll(TDictionary& dictionary) {
 
 
 
-TPrint:: TPrint(TMathExpression_ptr math_expr) :
-        _math_expr(math_expr)
+template <typename VariableType>
+TPrint<VariableType>::TPrint(TExpression_ptr expression) :
+        _expression(expression)
 {}
 
-void TPrint::execute(TDictionary& dictionary){
-    std::cout << _math_expr->calculate(dictionary) << "\n";
+template <typename VariableType>
+void TPrint<VariableType>::execute(TDictionary& dictionary){
+    std::cout << _expression->calculate(dictionary) << "\n";
 }
 
 
-
-TRead::TRead(const TVariable<number_t>& variable) :
+template <typename VariableType>
+TRead<VariableType>::TRead(const TVariable<VariableType>& variable) :
         _variable(variable)
 {}
 
-void TRead::execute(TDictionary& dictionary) {
+template <typename VariableType>
+void TRead<VariableType>::execute(TDictionary& dictionary) {
     std::cin >> dictionary[_variable];
 }
 
 
 
-TAssign::TAssign(const TVariable<number_t>& variable, TMathExpression_ptr math_expr) :
+template <typename VariableType>
+TAssign<VariableType>::TAssign(const TVariable<VariableType>& variable, TExpression_ptr expression) :
         _variable(variable),
-        _math_expr(math_expr)
+        _expression(expression)
 {}
 
-void TAssign::execute(TDictionary& dictionary) {
-    dictionary[_variable] = _math_expr->calculate(dictionary);
+template <typename VariableType>
+void TAssign<VariableType>::execute(TDictionary& dictionary) {
+    dictionary[_variable] = _expression->calculate(dictionary);
 }
 
 

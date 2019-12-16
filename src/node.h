@@ -6,12 +6,12 @@
 #include "expression.h"
 
 struct TNode {
-    TOperation_ptr                 operation;
-    TOperations                    operations;
-    TMathExpression_ptr            math_expression;
-    TBoolExpression_ptr            bool_expression;
-    TBoolExpression::EBoolOperator bool_operator;
-    TVariable<number_t>            number_variable;
-    TVariable<string_t>            string_variable;
-    number_t                       number;
+    TOperation_ptr                           operation;
+    TOperations                              operations;
+    std::shared_ptr< TExpression<number_t> > math_expression;
+    std::shared_ptr< TExpression<bool_t > >  bool_expression;
+    EBoolOperator                            bool_operator;
+    TVariable<number_t>                      number_variable;
+    TVariable<string_t>                      string_variable;
+    number_t                                 number;
 };

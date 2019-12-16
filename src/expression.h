@@ -6,57 +6,76 @@
 #include "cfg.h"
 #include "dictionary.h"
 
-struct TMathExpression;
-struct TBoolExpression;
+enum ENumberOperator {
+    PLUS,
+    MINUS,
+    MULT,
+    DIV,
+    MOD
+};
 
-typedef std::shared_ptr<TMathExpression> TMathExpression_ptr;
-typedef std::shared_ptr<TBoolExpression> TBoolExpression_ptr;
+enum EBoolOperator {
+    EQUAL,
+    NOT_EQUAL,
+    LESS,
+    LESS_OR_EQUAL,
+    GREATER,
+    GREATER_OR_EQUAL
+};
 
+template <typename VariableType>
+class TExpression;
 
-struct TMathExpression {
-    TMathExpression();
-    TMathExpression(TMathExpression_ptr left_expr, TMathExpression_ptr right_expr, char operation);
-    virtual number_t calculate(TDictionary& dictionary);
-    virtual ~TMathExpression() {}
+template <typename VariableType>
+class TExpression {
+public:
+    typedef std::shared_ptr<TExpression> TExpression_ptr;
+
+    TExpression();
+    TExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, ENumberOperator operation);
+    virtual VariableType calculate(TDictionary& dictionary);
+    virtual ~TExpression() {}
 
 private:
-    TMathExpression_ptr _left_expr;
-    TMathExpression_ptr _right_expr;
-    char                _operation;
+    TExpression_ptr _left_expr;
+    TExpression_ptr _right_expr;
+    ENumberOperator _operation;
+};
+
+template <typename VariableType>
+class TExprVariable : public TExpression<VariableType> {
+public:
+    TExprVariable(const TVariable<VariableType>& variable);
+    VariableType calculate(TDictionary& dictionary);
+
+private:
+    TVariable<VariableType> _variable;
+};
+
+template <typename VariableType>
+class TExprValue : public TExpression<VariableType> {
+public:
+    TExprValue(VariableType number);
+    VariableType calculate(TDictionary& dictionary);
+
+private:
+    VariableType _number;
 };
 
 
-struct TMathVariable : public TMathExpression {
-    TMathVariable(const TVariable<number_t>& variable);
-    number_t calculate(TDictionary& dictionary);
+
+template <>
+class TExpression<bool_t> {
+public:
+    typedef std::shared_ptr< TExpression<number_t> > TNumberExpression_ptr;
+
+    TExpression();
+    TExpression(TNumberExpression_ptr left_expr, TNumberExpression_ptr right_expr, EBoolOperator operation);
+    virtual bool_t calculate(TDictionary& dictionary);
+    virtual ~TExpression() {}
 
 private:
-    TVariable<number_t> _variable;
-};
-
-struct TMathNumber : public TMathExpression {
-    TMathNumber(number_t number);
-    number_t calculate(TDictionary& dictionary);
-
-private:
-    number_t _number;
-};
-
-struct TBoolExpression {
-    enum EBoolOperator {
-        EQUAL,
-        NOT_EQUAL,
-        LESS,
-        LESS_OR_EQUAL,
-        GREATER,
-        GREATER_OR_EQUAL
-    };
-
-    TBoolExpression(TMathExpression_ptr left_expr, TMathExpression_ptr right_expr, EBoolOperator operation);
-    bool calculate(TDictionary& dictionary);
-
-private:
-    TMathExpression_ptr _left_expr;
-    TMathExpression_ptr _right_expr;
-    EBoolOperator       _operation;
+    TNumberExpression_ptr _left_expr;
+    TNumberExpression_ptr _right_expr;
+    EBoolOperator         _operation;
 };

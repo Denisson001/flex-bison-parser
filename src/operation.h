@@ -22,32 +22,41 @@ private:
     std::list<TOperation_ptr> _operations;
 };
 
+template <typename VariableType>
 struct TPrint : public TOperation {
-    TPrint(TMathExpression_ptr math_expr);
+    typedef std::shared_ptr< TExpression<VariableType> > TExpression_ptr;
+
+    TPrint(TExpression_ptr expression);
     void execute(TDictionary& dictionary);
 
 private:
-    TMathExpression_ptr _math_expr;
+    TExpression_ptr _expression;
 };
 
+template <typename VariableType>
 struct TRead : public TOperation {
-    TRead(const TVariable<number_t>& variable);
+    TRead(const TVariable<VariableType>& variable);
     void execute(TDictionary& dictionary);
 
 private:
-    TVariable<number_t> _variable;
+    TVariable<VariableType> _variable;
 };
 
+template <typename VariableType>
 struct TAssign : public TOperation {
-    TAssign(const TVariable<number_t>& variable, TMathExpression_ptr math_expr);
+    typedef std::shared_ptr< TExpression<VariableType> > TExpression_ptr;
+
+    TAssign(const TVariable<VariableType>& variable, TExpression_ptr expression);
     void execute(TDictionary& dictionary);
 
 private:
-    TMathExpression_ptr _math_expr;
-    TVariable<number_t> _variable;
+    TExpression_ptr         _expression;
+    TVariable<VariableType> _variable;
 };
 
 struct TIfBlock : public TOperation {
+    typedef std::shared_ptr< TExpression<bool_t> > TBoolExpression_ptr;
+
     TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false);
     void execute(TDictionary& dictionary);
 
@@ -58,6 +67,8 @@ private:
 };
 
 struct TWhileBlock : public TOperation {
+    typedef std::shared_ptr< TExpression<bool_t> > TBoolExpression_ptr;
+
     TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations);
     void execute(TDictionary& dictionary);
 
