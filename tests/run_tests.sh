@@ -1,6 +1,6 @@
 cd ../src
 
-bash run.sh
+bash compile.sh
 cp main ../tests/solver
 bash clean.sh
 

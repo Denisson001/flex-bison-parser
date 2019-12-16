@@ -80,12 +80,13 @@ std::string createFileName(std::string dir, uint32_t test_num) {
  * Запускает решение на тесте из test_file
  * Результат лежит в файле cfg.solver_output
  * */
-void runTest(const std::string& test_file, const TCfg& cfg) {
+void runTest(const std::string& program_file, const std::string& input_file, const TCfg& cfg) {
     pid_t pid = fork();
     if (pid == 0) {
-        freopen(test_file.c_str(), "r", stdin);
+        freopen(input_file.c_str(), "r", stdin);
         freopen(cfg.solver_output.c_str(), "w", stdout);
-        execl(cfg.solver_name.c_str(), cfg.solver_name.c_str(), NULL);
+        freopen(cfg.solver_output.c_str(), "w", stderr);
+        execl(cfg.solver_name.c_str(), cfg.solver_name.c_str(), program_file.c_str(), NULL);
         exit(1);
     } else {
         int status;
@@ -130,7 +131,7 @@ void runTests(const TCfg& cfg) {
         const auto& dir = cfg.dirs[dir_num];
         for (uint32_t test_num = 1; test_num <= cfg.test_cnt[dir_num]; ++test_num) {
             const auto test_file = createFileName(dir, test_num);
-            runTest(test_file + ".in", cfg);
+            runTest(test_file + ".program", test_file + ".in", cfg);
             const auto compare_result = compareFiles(test_file + ".out", cfg.solver_output);
 
             if (compare_result.result) {

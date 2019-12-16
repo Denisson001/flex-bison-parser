@@ -16,11 +16,11 @@
 %}
 
 %token _VARIABLE _NUMBER
-%token _PRINT _IF _ELSE _WHILE
+%token _PRINT _IF _ELSE _WHILE _READ
 %token _EQ _NE _LT _LE _GT _GE
 
 %type<variable>        VARIABLE
-%type<operation>       OPERATION PRINT ASSIGN IF WHILE
+%type<operation>       OPERATION PRINT READ ASSIGN IF WHILE
 %type<operations>      OPERATIONS UNIT
 %type<math_expression> MATH_EXPR ADD_EXPR MULT_EXPR MODULO_EXPR TERM
 %type<bool_expression> BOOL_EXPR
@@ -47,6 +47,7 @@ OPERATIONS:    OPERATION                              {
 ;
 
 OPERATION:     PRINT                                  { $$ = $1; }
+|              READ                                   { $$ = $1; }
 |              ASSIGN                                 { $$ = $1; }
 |              IF                                     { $$ = $1; }
 |              WHILE                                  { $$ = $1; }
@@ -59,6 +60,9 @@ VARIABLE:      _VARIABLE                              { $$ = yylval.variable; }
 ;
 
 PRINT:         _PRINT '(' MATH_EXPR ')' ';'           { $$ = std::make_shared<TPrint>($3); }
+;
+
+READ:          _READ '(' VARIABLE ')' ';'             { $$ = std::make_shared<TRead>($3); }
 ;
 
 MATH_EXPR:     MATH_EXPR '+' ADD_EXPR                 { $$ = std::make_shared<TMathExpression>($1, $3, '+'); }

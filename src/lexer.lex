@@ -29,6 +29,7 @@
 if                     { return _IF; }
 else                   { return _ELSE; }
 print                  { return _PRINT; }
+read                   { return _READ; }
 while                  { return _WHILE; }
 
 [a-zA-Z_][a-zA-Z0-9_]* {

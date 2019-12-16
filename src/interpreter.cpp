@@ -12,7 +12,8 @@ int TInterpreter::run(char* program_filename) {
 }
 
 int TInterpreter::_buildAST(char* program_filename) {
-    freopen(program_filename, "r", stdin);
+    FILE* program_file = fopen(program_filename, "r");
+    stdin = program_file;
     const auto parse_result = yyparse(&_operations);
     stdin = fdopen(0, "r");
     return parse_result;

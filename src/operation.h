@@ -30,6 +30,14 @@ private:
     TMathExpression_ptr _math_expr;
 };
 
+struct TRead : public TOperation {
+    TRead(const variable_t& variable);
+    void execute(dictionary_t& dictionary);
+
+private:
+    variable_t _variable;
+};
+
 struct TAssign : public TOperation {
     TAssign(const variable_t& variable, TMathExpression_ptr math_expr);
     void execute(dictionary_t& dictionary);

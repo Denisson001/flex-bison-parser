@@ -24,6 +24,16 @@ void TPrint::execute(dictionary_t& dictionary){
 
 
 
+TRead::TRead(const variable_t& variable) :
+        _variable(variable)
+{}
+
+void TRead::execute(dictionary_t& dictionary) {
+    std::cin >> dictionary[_variable];
+}
+
+
+
 TAssign::TAssign(const variable_t& variable, TMathExpression_ptr math_expr) :
         _variable(variable),
         _math_expr(math_expr)
