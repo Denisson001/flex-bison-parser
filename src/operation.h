@@ -5,17 +5,18 @@
 
 #include "expression.h"
 
-struct TOperation;
+class TOperation;
 
 typedef std::shared_ptr<TOperation> TOperation_ptr;
 
-
-struct TOperation {
+class TOperation {
+public:
     virtual void execute(TDictionary& dictionary) = 0;
     virtual ~TOperation() {}
 };
 
-struct TOperations {
+class TOperations {
+public:
     void addOperation(TOperation_ptr operation);
     void executeAll(TDictionary& dictionary);
 private:
@@ -23,7 +24,8 @@ private:
 };
 
 template <typename VariableType>
-struct TPrint : public TOperation {
+class TPrint : public TOperation {
+public:
     typedef std::shared_ptr< TExpression<VariableType> > TExpression_ptr;
 
     TPrint(TExpression_ptr expression);
@@ -34,7 +36,8 @@ private:
 };
 
 template <typename VariableType>
-struct TRead : public TOperation {
+class TRead : public TOperation {
+public:
     TRead(const TVariable<VariableType>& variable);
     void execute(TDictionary& dictionary);
 
@@ -43,7 +46,8 @@ private:
 };
 
 template <typename VariableType>
-struct TAssign : public TOperation {
+class TAssign : public TOperation {
+public:
     typedef std::shared_ptr< TExpression<VariableType> > TExpression_ptr;
 
     TAssign(const TVariable<VariableType>& variable, TExpression_ptr expression);
@@ -54,7 +58,8 @@ private:
     TVariable<VariableType> _variable;
 };
 
-struct TIfBlock : public TOperation {
+class TIfBlock : public TOperation {
+public:
     typedef std::shared_ptr< TExpression<bool_t> > TBoolExpression_ptr;
 
     TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false);
@@ -66,7 +71,8 @@ private:
     TBoolExpression_ptr _bool_expr;
 };
 
-struct TWhileBlock : public TOperation {
+class TWhileBlock : public TOperation {
+public:
     typedef std::shared_ptr< TExpression<bool_t> > TBoolExpression_ptr;
 
     TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations);

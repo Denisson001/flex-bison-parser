@@ -3,8 +3,12 @@
 #include "operation.h"
 
 template class TPrint<number_t>;
+template class TPrint<string_t>;
 template class TAssign<number_t>;
 template class TRead<number_t>;
+template class TRead<string_t>;
+
+
 
 void TOperations::addOperation(TOperation_ptr operation) {
     _operations.push_back(operation);

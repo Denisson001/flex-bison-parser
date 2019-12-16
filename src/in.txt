@@ -5,7 +5,7 @@
         read(a_i);
         sum = sum + a_i;
         n = n - 1;
-        n_s = 12;
+        n_a = 12;
     }
     print(sum);
 }

@@ -1,6 +1,4 @@
 %{
-   #include <string>
-
    #include "node.h"
    #define YYSTYPE TNode
 
@@ -14,33 +12,39 @@
 
 %%
 
-[0-9]+                 {
-                         yylval.number = std::stoll(yytext);
-                         return _NUMBER;
-                       }
+[0-9]+                   {
+                           yylval.number = std::stoll(yytext);
+                           return _NUMBER;
+                         }
 
-==                     { return _EQ; }
-!=                     { return _NE; }
->=                     { return _GE; }
->                      { return _GT; }
-[<]=                   { return _LE; }
-[<]                    { return _LT; }
+==                       { return _EQ; }
+!=                       { return _NE; }
+>=                       { return _GE; }
+>                        { return _GT; }
+[<]=                     { return _LE; }
+[<]                      { return _LT; }
 
-if                     { return _IF; }
-else                   { return _ELSE; }
-print                  { return _PRINT; }
-read                   { return _READ; }
-while                  { return _WHILE; }
+if                       { return _IF; }
+else                     { return _ELSE; }
+print                    { return _PRINT; }
+read                     { return _READ; }
+while                    { return _WHILE; }
 
-[a-zA-Z_][a-zA-Z0-9_]* {
-                         yylval.number_variable = TVariable<number_t>(yytext);
-                         return _VARIABLE;
-                       }
 
-[-+*/%{}()=;]          { return *yytext; }
+[a-zA-Z_][a-zA-Z0-9_]*_s {
+                           yylval.string_variable = TVariable<string_t>(yytext);
+                           return _STRING_VAR;
+                         }
 
-[ \t\r\n]              ;
+[a-zA-Z_][a-zA-Z0-9_]*   {
+                           yylval.number_variable = TVariable<number_t>(yytext);
+                           return _NUMBER_VAR;
+                         }
 
-.                      { yyerror(NULL, "Invalid character"); } // не использовать здесь
+[-+*/%{}()=;]            { return *yytext; }
+
+[ \t\r\n]                ;
+
+.                        { yyerror(NULL, "Invalid character"); } // не использовать здесь
 
 %%
