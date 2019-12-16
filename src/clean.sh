@@ -1,4 +1,4 @@
 rm lex.yy.c
-rm parser.tab.c
-rm parser.tab.h
+rm grammar.tab.c
+rm grammar.tab.h
 rm main

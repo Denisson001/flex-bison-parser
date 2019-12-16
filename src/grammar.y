@@ -1,8 +1,6 @@
 %{
     #include <iostream>
-    #include <stdlib.h>
 
-    #include "interpreter.h"
     #include "expression.h"
     #include "node.h"
 
@@ -11,12 +9,10 @@
     extern int yylineno;
     extern int yylex();
 
-    void yyerror(char *s) { // вынести
-        std::cerr << s << ", line " << yylineno << std::endl;
+    void yyerror(TOperations* ast_root, char* errmsg) { // вынести
+        std::cerr << errmsg << ", near line " << yylineno << std::endl;
         exit(1);
     }
-
-    TInterpreter interpreter;
 %}
 
 %token _VARIABLE _NUMBER
@@ -30,9 +26,11 @@
 %type<bool_expression> BOOL_EXPR
 %type<bool_operator>   BOOL_OPERATOR
 
+%parse-param { TOperations* ast_root }
+
 %%
 
-PROGRAM:       UNIT                                   { interpreter.setOperations($1); }
+PROGRAM:       UNIT                                   { *ast_root = $1; }
 ;
 
 UNIT:          '{' OPERATIONS '}'                     { $$ = $2; }
@@ -103,10 +101,4 @@ BOOL_OPERATOR: _EQ                                    { $$ = TBoolExpression::EB
 WHILE:         _WHILE '(' BOOL_EXPR ')' UNIT          { $$ = std::make_shared<TWhileBlock>($3, $5); }
 ;
 
-
 %%
-
-int main() {
-    const auto result = yyparse();
-    interpreter.interpret();
-}

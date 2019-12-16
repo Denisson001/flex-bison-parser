@@ -4,9 +4,9 @@
    #include "node.h"
    #define YYSTYPE TNode
 
-   #include "parser.tab.h"
+   #include "grammar.tab.h"
 
-   void yyerror(char *s);
+   void yyerror(TOperations* ast_root, char* errmsg);
 %}
 
 %option yylineno
@@ -40,6 +40,6 @@ while                  { return _WHILE; }
 
 [ \t\r\n]              ;
 
-.                      { yyerror("Invalid character"); }
+.                      { yyerror(NULL, "Invalid character"); } // не использовать здесь
 
 %%
