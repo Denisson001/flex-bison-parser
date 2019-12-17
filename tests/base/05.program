@@ -1,0 +1,17 @@
+{
+    read(n);
+    result = n;
+    i = 2;
+    while (i * i <= n) {
+        if (n % i == 0) {
+            while (n % i == 0) {
+                n = n / i;
+            }
+            result = result - result / i;
+        }
+    }
+    if (n > 1) {
+        result = result - result / n;
+    }
+    print(result);
+}

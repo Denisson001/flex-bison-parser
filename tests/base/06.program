@@ -1,0 +1,24 @@
+{
+    read(line_s);
+    flag = 1;
+    while (k < len(line_s)) {
+        if (line_s[k] == "(") {
+            sum = sum + 1;
+        } else {
+            sum = sum - 1;
+        }
+        if (sum < 0) {
+            flag = 0;
+        }
+        k = k + 1;
+    }
+    if (flag == 1) {
+        if (sum == 0) {
+            print("True");
+        } else {
+            print("False");
+        }
+    } else {
+        print("False");
+    }
+}

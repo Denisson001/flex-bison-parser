@@ -1,0 +1,18 @@
+{
+    read(n);
+    read(first_element);
+    min = first_element;
+    max = first_element;
+    while (n - 1 > 0) {
+        read(element);
+        if (element < min) {
+            min = element;
+        }
+        if (element > max) {
+            max = element;
+        }
+        n = n - 1;
+    }
+    print(min);
+    print(max);
+}

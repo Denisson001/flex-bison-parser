@@ -1,9 +1,5 @@
 {
-    read(a_s);
-    read(n);
-    while (n > 0) {
-      a_s = a_s + a_s;
-      n = n - 1;
+    if ("ab"[0] == "a") {
+        print(asdsa);
     }
-    print(a_s);
 }

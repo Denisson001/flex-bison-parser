@@ -1,0 +1,13 @@
+{
+    read(line_s);
+    flag = 1;
+    while (flag == 1) {
+        k = 0;
+        while (k + 1 < len(line_s)) {
+            if (line_s[k] > line_s[k + 1]) {
+                tmp = line_s[k];
+                line_s[k] = line_s
+            }
+        }
+    }
+}
