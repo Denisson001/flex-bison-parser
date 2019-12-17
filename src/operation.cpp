@@ -5,9 +5,9 @@
 template class TPrint<number_t>;
 template class TPrint<string_t>;
 template class TAssign<number_t>;
+template class TAssign<string_t>;
 template class TRead<number_t>;
 template class TRead<string_t>;
-
 
 
 void TOperations::addOperation(TOperation_ptr operation) {
@@ -19,7 +19,6 @@ void TOperations::executeAll(TDictionary& dictionary) {
         operation->execute(dictionary);
     }
 }
-
 
 
 template <typename VariableType>

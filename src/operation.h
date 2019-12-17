@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <list>
 
 #include "expression.h"
@@ -60,8 +59,6 @@ private:
 
 class TIfBlock : public TOperation {
 public:
-    typedef std::shared_ptr< TExpression<bool_t> > TBoolExpression_ptr;
-
     TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false);
     void execute(TDictionary& dictionary);
 
@@ -73,8 +70,6 @@ private:
 
 class TWhileBlock : public TOperation {
 public:
-    typedef std::shared_ptr< TExpression<bool_t> > TBoolExpression_ptr;
-
     TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations);
     void execute(TDictionary& dictionary);
 

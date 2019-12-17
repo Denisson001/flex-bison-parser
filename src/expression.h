@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <memory>
 
 #include "dictionary.h"
@@ -9,21 +8,18 @@
 template <typename VariableType>
 class TExpression;
 
+typedef std::shared_ptr< TExpression<number_t> > TNumberExpression_ptr;
+typedef std::shared_ptr< TExpression<string_t> > TStringExpression_ptr;
+typedef std::shared_ptr< TExpression<bool_t> >   TBoolExpression_ptr;
+
+
 template <typename VariableType>
 class TExpression {
 public:
-    typedef std::shared_ptr<TExpression> TExpression_ptr;
-
-    TExpression();
-    TExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, TExprOperator<VariableType> operation);
-    virtual VariableType calculate(TDictionary& dictionary);
+    virtual VariableType calculate(TDictionary& dictionary) = 0;
     virtual ~TExpression() {}
-
-private:
-    TExpression_ptr             _left_expr;
-    TExpression_ptr             _right_expr;
-    TExprOperator<VariableType> _operation;
 };
+
 
 template <typename VariableType>
 class TExprVariable : public TExpression<VariableType> {
@@ -34,6 +30,7 @@ public:
 private:
     TVariable<VariableType> _variable;
 };
+
 
 template <typename VariableType>
 class TExprValue : public TExpression<VariableType> {
@@ -46,19 +43,43 @@ private:
 };
 
 
-
-template <>
-class TExpression<bool_t> {
+class TNumberExpression : public TExpression<number_t> {
 public:
-    typedef std::shared_ptr< TExpression<number_t> > TExpression_ptr;
-
-    TExpression();
-    TExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, TExprOperator<bool_t> operation);
-    virtual bool_t calculate(TDictionary& dictionary);
-    virtual ~TExpression() {}
+    TNumberExpression(TNumberExpression_ptr left_expr, TNumberExpression_ptr right_expr, ENumberOperator operation);
+    number_t calculate(TDictionary& dictionary);
+    ~TNumberExpression() {}
 
 private:
-    TExpression_ptr       _left_expr;
-    TExpression_ptr       _right_expr;
-    TExprOperator<bool_t> _operation;
+    TNumberExpression_ptr _left_expr;
+    TNumberExpression_ptr _right_expr;
+    ENumberOperator       _operation;
+};
+
+
+class TStringExpression : public TExpression<string_t> {
+public:
+    TStringExpression(TStringExpression_ptr left_expr, TStringExpression_ptr right_expr, EStringOperator operation);
+    string_t calculate(TDictionary& dictionary);
+    ~TStringExpression() {}
+
+private:
+    TStringExpression_ptr _left_expr;
+    TStringExpression_ptr _right_expr;
+    EStringOperator       _operation;
+};
+
+
+template <typename ExpressionsType>
+class TBoolExpression : public TExpression<bool_t> {
+public:
+    typedef std::shared_ptr< TExpression<ExpressionsType> > TExpression_ptr;
+
+    TBoolExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, EBoolOperator operation);
+    bool_t calculate(TDictionary& dictionary);
+    ~TBoolExpression() {}
+
+private:
+    TExpression_ptr _left_expr;
+    TExpression_ptr _right_expr;
+    EBoolOperator   _operation;
 };
