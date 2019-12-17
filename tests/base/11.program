@@ -1,0 +1,27 @@
+{
+    read(n);
+    while (k < n + 1) {
+        prime_s = prime_s + "1";
+        k = k + 1;
+    }
+
+    i = 2;
+    while (i <= n) {
+        if (prime_s[i] == "1") {
+            j = i * 2;
+            while (j <= n) {
+                prime_s[j] = "0";
+                j = j + i;
+            }
+        }
+        i = i + 1;
+    }
+
+    k = 2;
+    while (k < len(prime_s)) {
+        if (prime_s[k] == "1") {
+            print(k);
+        }
+        k = k + 1;
+    }
+}

@@ -43,7 +43,6 @@ void TRead<VariableType>::execute(TDictionary& dictionary) {
 }
 
 
-
 template <typename VariableType>
 TAssign<VariableType>::TAssign(const TVariable<VariableType>& variable, TExpression_ptr expression) :
         _variable(variable),
@@ -55,6 +54,17 @@ void TAssign<VariableType>::execute(TDictionary& dictionary) {
     dictionary[_variable] = _expression->calculate(dictionary);
 }
 
+
+TIndexAssign::TIndexAssign(const TVariable<string_t>& variable, TNumberExpression_ptr index_expression, TStringExpression_ptr expression) :
+        _variable(variable),
+        _index_expression(index_expression),
+        _expression(expression)
+{}
+
+void TIndexAssign::execute(TDictionary& dictionary) {
+    const auto index = _index_expression->calculate(dictionary);
+    dictionary[_variable][index] = _expression->calculate(dictionary)[0];
+}
 
 
 TIfBlock::TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false) :
@@ -70,7 +80,6 @@ void TIfBlock::execute(TDictionary& dictionary) {
         _operations_if_false.executeAll(dictionary);
     }
 }
-
 
 
 TWhileBlock::TWhileBlock(TBoolExpression_ptr bool_expr, TOperations operations) :

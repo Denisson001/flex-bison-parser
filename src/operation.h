@@ -57,6 +57,17 @@ private:
     TVariable<VariableType> _variable;
 };
 
+class TIndexAssign : public TOperation {
+public:
+    TIndexAssign(const TVariable<string_t>& variable, TNumberExpression_ptr index_expression, TStringExpression_ptr expression);
+    void execute(TDictionary& dictionary);
+
+private:
+    TNumberExpression_ptr _index_expression;
+    TStringExpression_ptr _expression;
+    TVariable<string_t>   _variable;
+};
+
 class TIfBlock : public TOperation {
 public:
     TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false);

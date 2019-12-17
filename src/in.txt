@@ -1,5 +1,5 @@
 {
     if ("ab"[0] == "a") {
-        print(asdsa);
+        print("heh");
     }
 }

@@ -59,6 +59,7 @@ OPERATION:     PRINT                                 { $$ = $1; }
 
 ASSIGN:        NUMBER_VAR '=' NUMBER_EXPR ';'        { $$ = std::make_shared< TAssign<number_t> >($1, $3); }
 |              STRING_VAR '=' STRING_EXPR ';'        { $$ = std::make_shared< TAssign<string_t> >($1, $3); }
+| STRING_VAR '[' NUMBER_EXPR ']' '=' STRING_EXPR ';' { $$ = std::make_shared<TIndexAssign>($1, $3, $6); }
 ;
 
 PRINT:         _PRINT '(' NUMBER_EXPR ')' ';'        { $$ = std::make_shared< TPrint<number_t> >($3); }
@@ -83,7 +84,7 @@ CONCAT_EXPR:   '(' STRING_EXPR ')'                   { $$ = $2; }
 
 SLICE_EXPR:
      CONCAT_EXPR '[' NUMBER_EXPR ':' NUMBER_EXPR ']' { $$ = std::make_shared< TExprFunction<string_t> >("slice", TNumberExpressions{ $3, $5 }, TStringExpressions{ $1 }); }
-|    CONCAT_EXPR '[' NUMBER_EXPR ']'                 { $$ = std::make_shared< TExprFunction<string_t> >("index", TNumberExpressions{ $3 }, TStringExpressions{ $1 }); }
+|              CONCAT_EXPR '[' NUMBER_EXPR ']'       { $$ = std::make_shared< TExprFunction<string_t> >("index", TNumberExpressions{ $3 }, TStringExpressions{ $1 }); }
 ;
 
 STRING_TERM:   STRING_VAR                            { $$ = std::make_shared< TExprVariable<string_t> >($1); }

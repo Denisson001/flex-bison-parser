@@ -95,6 +95,19 @@ void runTest(const std::string& program_file, const std::string& input_file, con
 }
 
 /*
+ * Выводит описание теста
+ * */
+void printDescription(const std::string& description_file) {
+    std::ifstream file(description_file);
+    std::string description;
+    std::cout << "Description : ";
+    while (getline(file, description)) {
+        std::cout << description << "\n";
+    }
+    file.close();
+}
+
+/*
  * Сравнивает корректный ответ с ответом решения
  * */
 TCompareResult compareFiles(const std::string& test_file, const std::string& solver_output) {
@@ -140,10 +153,12 @@ void runTests(const TCfg& cfg) {
 
             const std::string test_result = compare_result.result ? "OK" : "FAIL";
             std::cout << "Test " << test_file << ": " << test_result << "\n";
+            printDescription(test_file + ".desc");
             if (!compare_result.result) {
                 std::cout << "Correct line: " << compare_result.correct_line << "\n";
-                std::cout << "Solver line : " << compare_result.solver_line << "\n";
+                std::cout << "Solver line : " << compare_result.solver_line  << "\n";
             }
+            std::cout << "\n";
         }
         total_test_count += cfg.test_cnt[dir_num];
     }

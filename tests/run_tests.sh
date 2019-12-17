@@ -6,7 +6,7 @@ bash clean.sh
 
 cd ../tests
 
-g++ -std=c++11 tests.cpp -o tests
+g++ -fsanitize=address -std=c++11 tests.cpp -o tests
 ./tests
 
 rm solver_output.txt
