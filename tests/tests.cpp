@@ -65,7 +65,7 @@ TCfg readCfg() {
 
 /*
  * Создает путь до файла с тестом по директории и номеру теста
- * Например "base/01"
+ * Например "algo/01"
  * */
 std::string createFileName(std::string dir, uint32_t test_num) {
     std::string result = dir + "/";
