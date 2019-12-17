@@ -14,4 +14,5 @@ struct TNode {
     TVariable<string_t>   string_variable;
     number_t              number;
     string_t              string;
+    function_t            function;
 };

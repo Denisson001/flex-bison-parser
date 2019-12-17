@@ -19,13 +19,6 @@
                            return _NUMBER;
                          }
 
-==                       { return _EQ; }
-!=                       { return _NE; }
->=                       { return _GE; }
->                        { return _GT; }
-[<]=                     { return _LE; }
-[<]                      { return _LT; }
-
 if                       { return _IF; }
 else                     { return _ELSE; }
 print                    { return _PRINT; }
@@ -58,7 +51,7 @@ len                      { return _LEN_FUNC; }
                            return _NUMBER_VAR;
                          }
 
-[-+*/%{}()=;:\[\]]       { return *yytext; }
+[-+*/%{}()=;:\[\]<>!&|]  { return *yytext; }
 
 [ \t\r\n]                ;
 

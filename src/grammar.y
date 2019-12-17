@@ -19,7 +19,6 @@
 %token _NUMBER_VAR _STRING_VAR
 %token _PRINT _IF _ELSE _WHILE _READ
 %token _LEN_FUNC
-%token _EQ _NE _LT _LE _GT _GE
 
 %type<number_variable>   NUMBER_VAR
 %type<string_variable>   STRING_VAR
@@ -27,8 +26,8 @@
 %type<operations>        OPERATIONS UNIT
 %type<number_expression> NUMBER_EXPR ADD_EXPR MULT_EXPR MOD_EXPR NUMBER_TERM
 %type<string_expression> STRING_EXPR CONCAT_EXPR SLICE_EXPR STRING_TERM
-%type<bool_expression>   BOOL_EXPR
-%type<bool_operator>     BOOL_OPERATOR
+%type<bool_expression>   BOOL_EXPR OR_EXPR AND_EXPR BOOL_TERM
+%type<function>          BOOL_FUNCTION
 
 %parse-param { TOperations* ast_root }
 
@@ -59,7 +58,8 @@ OPERATION:     PRINT                                 { $$ = $1; }
 
 ASSIGN:        NUMBER_VAR '=' NUMBER_EXPR ';'        { $$ = std::make_shared< TAssign<number_t> >($1, $3); }
 |              STRING_VAR '=' STRING_EXPR ';'        { $$ = std::make_shared< TAssign<string_t> >($1, $3); }
-| STRING_VAR '[' NUMBER_EXPR ']' '=' STRING_EXPR ';' { $$ = std::make_shared<TIndexAssign>($1, $3, $6); }
+|              STRING_VAR '[' NUMBER_EXPR ']' '=' STRING_EXPR ';'
+                                                     { $$ = std::make_shared<TIndexAssign>($1, $3, $6); }
 ;
 
 PRINT:         _PRINT '(' NUMBER_EXPR ')' ';'        { $$ = std::make_shared< TPrint<number_t> >($3); }
@@ -74,7 +74,7 @@ STRING_VAR:    _STRING_VAR                           { $$ = yylval.string_variab
 ;
 
 STRING_EXPR:   CONCAT_EXPR                           { $$ = $1; }
-|              STRING_EXPR '+' CONCAT_EXPR           { $$ = std::make_shared<TStringExpression>($1, $3, EStringOperator::CONCAT); }
+|              STRING_EXPR '+' CONCAT_EXPR           { $$ = std::make_shared< TExpression<string_t> >($1, $3, EStringOperator::CONCAT); }
 ;
 
 CONCAT_EXPR:   '(' STRING_EXPR ')'                   { $$ = $2; }
@@ -82,8 +82,8 @@ CONCAT_EXPR:   '(' STRING_EXPR ')'                   { $$ = $2; }
 |              SLICE_EXPR                            { $$ = $1; }
 ;
 
-SLICE_EXPR:
-     CONCAT_EXPR '[' NUMBER_EXPR ':' NUMBER_EXPR ']' { $$ = std::make_shared< TExprFunction<string_t> >("slice", TNumberExpressions{ $3, $5 }, TStringExpressions{ $1 }); }
+SLICE_EXPR:    CONCAT_EXPR '[' NUMBER_EXPR ':' NUMBER_EXPR ']'
+                                                     { $$ = std::make_shared< TExprFunction<string_t> >("slice", TNumberExpressions{ $3, $5 }, TStringExpressions{ $1 }); }
 |              CONCAT_EXPR '[' NUMBER_EXPR ']'       { $$ = std::make_shared< TExprFunction<string_t> >("index", TNumberExpressions{ $3 }, TStringExpressions{ $1 }); }
 ;
 
@@ -94,17 +94,17 @@ STRING_TERM:   STRING_VAR                            { $$ = std::make_shared< TE
 NUMBER_VAR:    _NUMBER_VAR                           { $$ = yylval.number_variable; }
 ;
 
-NUMBER_EXPR:   NUMBER_EXPR '+' ADD_EXPR              { $$ = std::make_shared<TNumberExpression>($1, $3, ENumberOperator::PLUS); }
-|              NUMBER_EXPR '-' ADD_EXPR              { $$ = std::make_shared<TNumberExpression>($1, $3, ENumberOperator::MINUS); }
+NUMBER_EXPR:   NUMBER_EXPR '+' ADD_EXPR              { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::PLUS); }
+|              NUMBER_EXPR '-' ADD_EXPR              { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MINUS); }
 |              ADD_EXPR                              { $$ = $1; }
 ;
 
-ADD_EXPR:      ADD_EXPR '*' MULT_EXPR                { $$ = std::make_shared<TNumberExpression>($1, $3, ENumberOperator::MULT); }
-|              ADD_EXPR '/' MULT_EXPR                { $$ = std::make_shared<TNumberExpression>($1, $3, ENumberOperator::DIV); }
+ADD_EXPR:      ADD_EXPR '*' MULT_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MULT); }
+|              ADD_EXPR '/' MULT_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::DIV); }
 |              MULT_EXPR                             { $$ = $1; }
 ;
 
-MULT_EXPR:     MULT_EXPR '%' MOD_EXPR                { $$ = std::make_shared<TNumberExpression>($1, $3, ENumberOperator::MOD); }
+MULT_EXPR:     MULT_EXPR '%' MOD_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MOD); }
 |              MOD_EXPR                              { $$ = $1; }
 ;
 
@@ -124,17 +124,30 @@ IF:            _IF '(' BOOL_EXPR ')' UNIT            { $$ = std::make_shared<TIf
 WHILE:         _WHILE '(' BOOL_EXPR ')' UNIT         { $$ = std::make_shared<TWhileBlock>($3, $5); }
 ;
 
-
-BOOL_EXPR:     NUMBER_EXPR BOOL_OPERATOR NUMBER_EXPR { $$ = std::make_shared< TBoolExpression<number_t> >($1, $3, $2); }
-|              STRING_EXPR BOOL_OPERATOR STRING_EXPR { $$ = std::make_shared< TBoolExpression<string_t> >($1, $3, $2); }
+BOOL_EXPR:     BOOL_EXPR '|''|' OR_EXPR              { $$ = std::make_shared< TExpression<bool_t> >($1, $4, EBoolOperator::OR); }
+|              OR_EXPR                               { $$ = $1; }
 ;
 
-BOOL_OPERATOR: _EQ                                   { $$ = EBoolOperator::EQUAL; }
-|              _NE                                   { $$ = EBoolOperator::NOT_EQUAL; }
-|              _LT                                   { $$ = EBoolOperator::LESS; }
-|              _LE                                   { $$ = EBoolOperator::LESS_OR_EQUAL; }
-|              _GT                                   { $$ = EBoolOperator::GREATER; }
-|              _GE                                   { $$ = EBoolOperator::GREATER_OR_EQUAL; }
+OR_EXPR:       OR_EXPR '&''&' AND_EXPR               { $$ = std::make_shared< TExpression<bool_t> >($1, $4, EBoolOperator::AND); }
+|              AND_EXPR                              { $$ = $1; }
+;
+
+AND_EXPR:      BOOL_TERM                             { $$ = $1; }
+|              '(' BOOL_EXPR ')'                     { $$ = $2; }
+|              '!' '(' BOOL_EXPR ')'                 { $$ = std::make_shared< TExprFunction<bool_t> >("!",
+                                                                 TNumberExpressions{}, TStringExpressions{}, TBoolExpressions{ $3 }); }
+;
+
+BOOL_TERM:     NUMBER_EXPR BOOL_FUNCTION NUMBER_EXPR { $$ = std::make_shared< TExprFunction<bool_t> >($2, TNumberExpressions{ $1, $3 }, TStringExpressions{}); }
+|              STRING_EXPR BOOL_FUNCTION STRING_EXPR { $$ = std::make_shared< TExprFunction<bool_t> >($2, TNumberExpressions{}, TStringExpressions{ $1, $3 }); }
+;
+
+BOOL_FUNCTION: '=''='                                { $$ = "=="; }
+|              '!''='                                { $$ = "!="; }
+|              '<''='                                { $$ = "<="; }
+|              '>''='                                { $$ = ">="; }
+|              '<'                                   { $$ = "<"; }
+|              '>'                                   { $$ = ">"; }
 ;
 
 %%

@@ -1,18 +1,77 @@
+#include <variant>
+
 #include "expression.h"
 
 template class TExpression<number_t>;
 template class TExprVariable<number_t>;
 template class TExprValue<number_t>;
 template class TExprFunction<number_t>;
-template class TBoolExpression<number_t>;
 
 template class TExpression<string_t>;
 template class TExprVariable<string_t>;
 template class TExprValue<string_t>;
 template class TExprFunction<string_t>;
-template class TBoolExpression<string_t>;
 
 template class TExpression<bool_t>;
+template class TExprFunction<bool_t>;
+
+
+template <typename VariableType>
+TExpression<VariableType>::TExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, TExprOperator<VariableType> operation) :
+        _left_expr(left_expr),
+        _right_expr(right_expr),
+        _operation(operation)
+{}
+
+
+/* number_t */
+
+template <>
+number_t TExpression<number_t>::calculate(TDictionary& dictionary) {
+    const auto left_result  = _left_expr->calculate(dictionary);
+    const auto right_result = _right_expr->calculate(dictionary);
+    switch (_operation.type) {
+        case PLUS:
+            return left_result + right_result;
+        case MINUS:
+            return left_result - right_result;
+        case MULT:
+            return left_result * right_result;
+        case DIV:
+            return left_result / right_result;
+        case MOD:
+            return left_result % right_result;
+    }
+    return {};
+}
+
+/* string_t */
+
+template <>
+string_t TExpression<string_t>::calculate(TDictionary& dictionary) {
+    const auto left_result  = _left_expr->calculate(dictionary);
+    const auto right_result = _right_expr->calculate(dictionary);
+    switch (_operation.type) {
+        case CONCAT:
+            return left_result + right_result;
+    }
+    return {};
+}
+
+/* bool_t */
+
+template <>
+bool_t TExpression<bool_t>::calculate(TDictionary& dictionary) {
+    const auto left_result  = _left_expr->calculate(dictionary);
+    const auto right_result = _right_expr->calculate(dictionary);
+    switch (_operation.type) {
+        case AND:
+            return left_result && right_result;
+        case OR:
+            return left_result || right_result;
+    }
+    return {};
+}
 
 
 template <typename VariableType>
@@ -38,10 +97,12 @@ VariableType TExprValue<VariableType>::calculate(TDictionary& dictionary) {
 
 
 template <typename VariableType>
-TExprFunction<VariableType>::TExprFunction(const function_t& function_name, const TNumberExpressions& number_expressions, const TStringExpressions& string_expressions) :
+TExprFunction<VariableType>::TExprFunction(const function_t& function_name, const TNumberExpressions& number_expressions,
+                                           const TStringExpressions& string_expressions, const TBoolExpressions& bool_expressions) :
         _function_name(function_name),
         _number_expressions(number_expressions),
-        _string_expressions(string_expressions)
+        _string_expressions(string_expressions),
+        _bool_expressions(bool_expressions)
 {}
 
 template <>
@@ -74,77 +135,47 @@ string_t TExprFunction<string_t>::calculate(TDictionary& dictionary) {
     return {};
 }
 
-
-/* number_t */
-
-TNumberExpression::TNumberExpression(TNumberExpression_ptr left_expr, TNumberExpression_ptr right_expr, ENumberOperator operation) :
-        _left_expr(left_expr),
-        _right_expr(right_expr),
-        _operation(operation)
-{}
-
-number_t TNumberExpression::calculate(TDictionary& dictionary) {
-    const auto left_result  = _left_expr->calculate(dictionary);
-    const auto right_result = _right_expr->calculate(dictionary);
-    switch (_operation) {
-        case PLUS:
-            return left_result + right_result;
-        case MINUS:
-            return left_result - right_result;
-        case MULT:
-            return left_result * right_result;
-        case DIV:
-            return left_result / right_result;
-        case MOD:
-            return left_result % right_result;
+template <>
+bool_t TExprFunction<bool_t>::calculate(TDictionary& dictionary) {
+    if (_function_name == "!") {
+        if (_bool_expressions.size() < 1) {
+            return {};
+        }
+        return !_bool_expressions[0]->calculate(dictionary);
     }
-    return {};
-}
 
-/* string_t */
+    std::variant<number_t, string_t> left_value;
+    std::variant<number_t, string_t> right_value;
+    if (_number_expressions.size() >= 2) {
+        left_value = _number_expressions[0]->calculate(dictionary);
+        right_value = _number_expressions[1]->calculate(dictionary);
 
-TStringExpression::TStringExpression(TStringExpression_ptr left_expr, TStringExpression_ptr right_expr, EStringOperator operation) :
-        _left_expr(left_expr),
-        _right_expr(right_expr),
-        _operation(operation)
-{}
+    } else if (_string_expressions.size() >= 2) {
+        left_value = _string_expressions[0]->calculate(dictionary);
+        right_value = _string_expressions[1]->calculate(dictionary);
 
-string_t TStringExpression::calculate(TDictionary& dictionary) {
-    const auto left_result  = _left_expr->calculate(dictionary);
-    const auto right_result = _right_expr->calculate(dictionary);
-    switch (_operation) {
-        case CONCAT:
-            return left_result + right_result;
+    } else {
+        return {};
     }
-    return {};
-}
 
-/* bool_t */
+    if (_function_name == "==") {
+        return left_value == right_value;
 
-template <typename ExpressionsType>
-TBoolExpression<ExpressionsType>::TBoolExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, EBoolOperator operation) :
-        _left_expr(left_expr),
-        _right_expr(right_expr),
-        _operation(operation)
-{}
+    } else if (_function_name == "!=") {
+        return left_value != right_value;
 
-template <typename ExpressionsType>
-bool_t TBoolExpression<ExpressionsType>::calculate(TDictionary& dictionary) {
-    const auto left_result  = _left_expr->calculate(dictionary);
-    const auto right_result = _right_expr->calculate(dictionary);
-    switch (_operation) {
-        case EQUAL:
-            return left_result == right_result;
-        case NOT_EQUAL:
-            return left_result != right_result;
-        case LESS:
-            return left_result <  right_result;
-        case LESS_OR_EQUAL:
-            return left_result <= right_result;
-        case GREATER:
-            return left_result >  right_result;
-        case GREATER_OR_EQUAL:
-            return left_result >= right_result;
+    } else if (_function_name == "<=") {
+        return left_value <= right_value;
+
+    } else if (_function_name == ">=") {
+        return left_value >= right_value;
+
+    } else if (_function_name == "<") {
+        return left_value < right_value;
+
+    } else if (_function_name == ">") {
+        return left_value > right_value;
     }
+
     return {};
 }

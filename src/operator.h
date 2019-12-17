@@ -15,10 +15,30 @@ enum EStringOperator {
 };
 
 enum EBoolOperator {
-    EQUAL,
-    NOT_EQUAL,
-    LESS,
-    LESS_OR_EQUAL,
-    GREATER,
-    GREATER_OR_EQUAL
+    OR,
+    AND
+};
+
+template <typename VariableType>
+struct TExprOperator;
+
+template <>
+struct TExprOperator<number_t> {
+    TExprOperator() {}
+    TExprOperator(ENumberOperator type);
+    ENumberOperator type;
+};
+
+template <>
+struct TExprOperator<string_t> {
+    TExprOperator() {}
+    TExprOperator(EStringOperator type);
+    EStringOperator type;
+};
+
+template <>
+struct TExprOperator<bool_t> {
+    TExprOperator() {}
+    TExprOperator(EBoolOperator type);
+    EBoolOperator type;
 };

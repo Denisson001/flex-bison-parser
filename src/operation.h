@@ -8,11 +8,13 @@ class TOperation;
 
 typedef std::shared_ptr<TOperation> TOperation_ptr;
 
+
 class TOperation {
 public:
     virtual void execute(TDictionary& dictionary) = 0;
     virtual ~TOperation() {}
 };
+
 
 class TOperations {
 public:
@@ -21,6 +23,7 @@ public:
 private:
     std::list<TOperation_ptr> _operations;
 };
+
 
 template <typename VariableType>
 class TPrint : public TOperation {
@@ -34,6 +37,7 @@ private:
     TExpression_ptr _expression;
 };
 
+
 template <typename VariableType>
 class TRead : public TOperation {
 public:
@@ -43,6 +47,7 @@ public:
 private:
     TVariable<VariableType> _variable;
 };
+
 
 template <typename VariableType>
 class TAssign : public TOperation {
@@ -57,6 +62,7 @@ private:
     TVariable<VariableType> _variable;
 };
 
+
 class TIndexAssign : public TOperation {
 public:
     TIndexAssign(const TVariable<string_t>& variable, TNumberExpression_ptr index_expression, TStringExpression_ptr expression);
@@ -68,6 +74,7 @@ private:
     TVariable<string_t>   _variable;
 };
 
+
 class TIfBlock : public TOperation {
 public:
     TIfBlock(TBoolExpression_ptr bool_expr, TOperations operations_if_true, TOperations operations_if_false);
@@ -78,6 +85,7 @@ private:
     TOperations         _operations_if_false;
     TBoolExpression_ptr _bool_expr;
 };
+
 
 class TWhileBlock : public TOperation {
 public:
