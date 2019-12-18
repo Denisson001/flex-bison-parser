@@ -11,7 +11,7 @@
     ```
     ../src$ bison -d grammar.y
     ../src$ lex lexer.lex
-    ../src$ g++ -std=c++17 grammar.tab.c lex.yy.c interpreter.cpp \ 
+    ../src$ g++ -std=c++17 grammar.tab.c lex.yy.c interpreter.cpp \
             operation.cpp operator.cpp expression.cpp dictionary.cpp \
             variable.cpp main.cpp -o main
     ```
@@ -20,7 +20,7 @@
   - ```
     ../src$ ./main program.txt
     ```
-  - Из *stdin* читает интерпретируемая программа. 
+  - Из *stdin* читает интерпретируемая программа.
 - Запустить тесты
   - Скриптом под Linux
   - ```
@@ -37,8 +37,12 @@
       ```
       ../tests$ ./main algo/01.program <algo/01.in
       ```
-  
+
 ## Project
+
+- Директория `../src`
+- В исходниках есть комментарии к коду
+-
 
 ## Tests
 
@@ -56,10 +60,15 @@
 
 ## TODO
 
+- убрать запуск из compile.sh
+  - протестить скрипты из readme
+  - добавить скрипт для запуска в src?
+
+
 - вынести error catchers
 - унарный минус в грамматику
-- ридинги все
+- ридинги
   - описание кода
+    - expression.cpp
 - ошибки компиляции
 - кидать рантайм ошибки
-

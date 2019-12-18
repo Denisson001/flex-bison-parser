@@ -2,6 +2,11 @@
 
 #include "expression.h"
 
+/*
+ * Объявление всех шаблонных подстановок для классов-выражений
+ * Можно было бы не выносить в отдельный файл реализацию,
+ * Но для текущей задачи такое объявление позволяет явно следить за всеми типами
+ */
 template class TExpression<number_t>;
 template class TExprVariable<number_t>;
 template class TExprValue<number_t>;
@@ -15,7 +20,9 @@ template class TExprFunction<string_t>;
 template class TExpression<bool_t>;
 template class TExprFunction<bool_t>;
 
-
+/*
+ * Шаблонной конструктор для класса выражений
+ */
 template <typename VariableType>
 TExpression<VariableType>::TExpression(TExpression_ptr left_expr, TExpression_ptr right_expr, TExprOperator<VariableType> operation) :
         _left_expr(left_expr),
@@ -23,6 +30,12 @@ TExpression<VariableType>::TExpression(TExpression_ptr left_expr, TExpression_pt
         _operation(operation)
 {}
 
+/*
+ * Далее идут специализации метода calculate для разных типов
+ * Все они работают схожим образом
+ * Вычисляются значения подвыражений слева и справа от оператора
+ * А дальше разбираются случаи относительно оператора
+ */
 
 /* number_t */
 
@@ -74,22 +87,34 @@ bool_t TExpression<bool_t>::calculate(TDictionary& dictionary) {
 }
 
 
+/*
+ * Конструктор для выражения из одной переменной
+ */
 template <typename VariableType>
 TExprVariable<VariableType>::TExprVariable(const TVariable<VariableType>& variable) :
         _variable(variable)
 {}
 
+/*
+ * В случае выражения из одной переменной все вычисления выраждаются в возврат значения из словаря перменных
+ */
 template <typename VariableType>
 VariableType TExprVariable<VariableType>::calculate(TDictionary& dictionary) {
     return dictionary[_variable];
 }
 
 
+/*
+ * Конструктор для выражения из одного значения типа VariableType
+ */
 template <typename VariableType>
 TExprValue<VariableType>::TExprValue(VariableType value) :
         _value(value)
 {}
 
+/*
+ * В случае выражения из одного значения все вычисления выраждаются в возврат этого значения
+ */
 template <typename VariableType>
 VariableType TExprValue<VariableType>::calculate(TDictionary& dictionary) {
     return _value;
