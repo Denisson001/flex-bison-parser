@@ -4,7 +4,7 @@
 
 /*
  * Объявление всех шаблонных подстановок для классов-выражений
- * Можно было бы не выносить в отдельный файл реализацию,
+ * Можно было бы не выносить реализацию в отдельный файл,
  * Но для текущей задачи такое объявление позволяет явно следить за всеми типами
  */
 template class TExpression<number_t>;
@@ -31,7 +31,7 @@ TExpression<VariableType>::TExpression(TExpression_ptr left_expr, TExpression_pt
 {}
 
 /*
- * Далее идут специализации метода calculate для разных типов
+ * Далее идут специализации метода TExpression<VariableType>::calculate для разных типов
  * Все они работают схожим образом
  * Вычисляются значения подвыражений слева и справа от оператора
  * А дальше разбираются случаи относительно оператора
@@ -130,8 +130,16 @@ TExprFunction<VariableType>::TExprFunction(const function_t& function_name, cons
         _bool_expressions(bool_expressions)
 {}
 
+/*
+ * Далее идут специализации метода TExprFunction<VariableType>::calculate для разных типов
+ */
+
+/*
+ * Есть только одна функция, которая возвращает number_t
+ * len(string_expr) - возвращает длину строки
+ */
 template <>
-number_t TExprFunction<number_t >::calculate(TDictionary& dictionary) {
+number_t TExprFunction<number_t >::calculate(TDictionary& dictionary) {      /// ПРОВЕРКА КОРРЕКТНОСТИ !!!!!!!!!!!!!
     if (_function_name == "len") {
         if (_string_expressions.size() < 1) {
             return {};
@@ -141,6 +149,11 @@ number_t TExprFunction<number_t >::calculate(TDictionary& dictionary) {
     return {};
 }
 
+/*
+ * Есть две функции, которые возвращают string_t
+ * slice - string_expr[number_expr : number_expr] - возвращает подстроку
+ * index - string_expr[index] - возвращает элемент строки по индексу
+ */
 template <>
 string_t TExprFunction<string_t>::calculate(TDictionary& dictionary) {
     if (_function_name == "slice") {
@@ -160,6 +173,13 @@ string_t TExprFunction<string_t>::calculate(TDictionary& dictionary) {
     return {};
 }
 
+/*
+ * Функции, которые возвращают bool_t
+ * "!" - функция NOT - инвертирует значение логического выражения
+ * "==", "!=", "<=", ">=", "<", ">" - логические функции
+ * Выражения по обе стороны от оператора должны совпадать и могут быть number_t или string_t
+ * Чтобы не разбирать случаи используется std::variant
+ */
 template <>
 bool_t TExprFunction<bool_t>::calculate(TDictionary& dictionary) {
     if (_function_name == "!") {

@@ -4,9 +4,16 @@
     #include "expression.h"
     #include "node.h"
 
+    /*
+     * Устанавливает тип для вершины абстрактного дерева разбора
+     */
     #define YYSTYPE TNode
 
     extern int yylineno;
+
+    /*
+     * Используется в генерируемых файлах
+     */
     extern int yylex();
 
     void yyerror(TOperations* ast_root, char* errmsg) { // вынести
@@ -15,18 +22,40 @@
     }
 %}
 
+/*
+ * Определение терминальных символов грамматики, возвращаемых из лексера
+ */
 %token _NUMBER _STRING
 %token _NUMBER_VAR _STRING_VAR
 %token _PRINT _IF _ELSE _WHILE _READ
 %token _LEN_FUNC
 
+/*
+ * Далее идет определение нетерминалов грамматики с заданием их типов в вершине дерева разбора
+ */
+
+/*
+ * Нетерминалы переменных разных типов
+ */
 %type<number_variable>   NUMBER_VAR
 %type<string_variable>   STRING_VAR
-%type<operation>         OPERATION PRINT READ ASSIGN IF WHILE
+
+/*
+ * Нетерминалы разных операций и наборов операций
+ */
+%type<operation>         OPERATION  PRINT READ ASSIGN IF WHILE
 %type<operations>        OPERATIONS UNIT
-%type<number_expression> NUMBER_EXPR ADD_EXPR MULT_EXPR MOD_EXPR NUMBER_TERM
+
+/*
+ * Нетерминалы, используемые в разоборе математических выражений разных типов
+ */
+%type<number_expression> NUMBER_EXPR ADD_EXPR    MULT_EXPR  MOD_EXPR    NUMBER_TERM
 %type<string_expression> STRING_EXPR CONCAT_EXPR SLICE_EXPR STRING_TERM
-%type<bool_expression>   BOOL_EXPR OR_EXPR AND_EXPR BOOL_TERM
+%type<bool_expression>   BOOL_EXPR   OR_EXPR     AND_EXPR   BOOL_TERM
+
+/*
+ * Нетерминал, соответствующий множеству операций сравнения, например, "==" или "<"
+ */
 %type<function>          BOOL_FUNCTION
 
 %parse-param { TOperations* ast_root }

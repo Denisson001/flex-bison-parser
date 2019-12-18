@@ -2,11 +2,21 @@
 
 #include "cfg.h"
 
+/*
+ * Класс для реализации сущности перменной
+ * По факту хранится имя переменной, а значение достается из dictionary
+ */
 template <typename VariableType>
-struct TVariable {
+class TVariable {
+public:
     TVariable();
     TVariable(const variable_t& variable_name);
+
+    /*
+     * Оператор меньше нужен для работы с dictionary
+     */
     bool operator<(const TVariable<VariableType>& other_variable) const;
 
-    variable_t variable_name;
+private:
+    variable_t _variable_name;
 };
