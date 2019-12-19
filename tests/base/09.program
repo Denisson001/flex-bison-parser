@@ -1,0 +1,17 @@
+{
+    read(line_s);
+    flag = 1;
+
+    while (k < len(line_s) - k && flag == 1) {
+        if (line_s[k] != line_s[len(line_s) - k - 1]) {
+            flag = 0;
+        }
+        k = k + 1;
+    }
+
+    if (flag == 1) {
+        print("True");
+    } else {
+        print("False");
+    }
+}

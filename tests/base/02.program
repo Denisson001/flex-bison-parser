@@ -1,0 +1,13 @@
+{
+    print(42);
+    print("24");
+
+    number = 123;
+    print(number);
+
+    string_s = "321";
+    print(string_s);
+
+    print(string_s[0:1]);
+    print(string_s[2]);
+}

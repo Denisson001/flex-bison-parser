@@ -26,8 +26,9 @@ public:
 
 private:
     static const line_t _NAN = -1;
+
     /*
-     * Зарегистрировать обработчик ошибок
+     * Имя обработчика
      */
     THandlerName _handler_name;
 };

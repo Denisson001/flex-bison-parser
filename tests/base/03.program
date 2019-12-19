@@ -1,0 +1,14 @@
+{
+    a = 12;
+    b = a;
+    b = a + b;
+
+    str_s = "123";
+    string_s = str_s;
+
+    string_s[0] = "2";
+
+    print(a);
+    print(b);
+    print(string_s);
+}

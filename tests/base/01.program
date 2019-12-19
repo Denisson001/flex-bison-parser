@@ -1,0 +1,12 @@
+{
+    read(number);
+    read(string_s);
+
+    if (number == 12321) {
+        print("NUMBER OK");
+    }
+
+    if (string_s == "abacaba") {
+        print("STRING OK");
+    }
+}
