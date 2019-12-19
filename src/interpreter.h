@@ -1,7 +1,9 @@
 #pragma once
 
 #include "operation.h"
+#include "error_handler.h"
 #include "node.h"
+
 
 /*
  * Класс интерпретатора
@@ -30,10 +32,10 @@ private:
     /*
      * Вся интерпретируемая программа представляется как набор операций
      */
-    TOperations _operations;
+    TOperations   _operations;
 
     /*
      * Словарь всех переменных интерпретируемой программы
      */
-    TDictionary _dictionary;
+    TDictionary   _dictionary;
 };

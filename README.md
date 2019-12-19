@@ -4,37 +4,37 @@
 
 - Собрать проект
   - Скриптом под Linux
-    ```
+    ```bash
     ../src$ bash compile.sh
     ```
   - Пошагово
-    ```
+    ```bash
     ../src$ bison -d grammar.y
     ../src$ lex lexer.lex
     ../src$ g++ -std=c++17 grammar.tab.c lex.yy.c interpreter.cpp \
-            operation.cpp operator.cpp expression.cpp dictionary.cpp \
-            variable.cpp main.cpp -o main
+            error_handler.cpp operation.cpp operator.cpp expression.cpp \ 
+            dictionary.cpp variable.cpp main.cpp -o main
     ```
 - Запустить интерпретатор
   - Интерпретатор принимает единственный параметр - путь до файла с интерпретируемой программой.
-  - ```
+  - ```bash
     ../src$ ./main program.txt
     ```
   - Из *stdin* читает интерпретируемая программа.
 - Запустить тесты
   - Скриптом под Linux
-  - ```
+  - ```bash
     ../tests$ bash run_tests.sh
     ```
   - Пошагово
     - Подложить собранный бинарник из директории `../src` в директорию `../tests`
     - Собрать и запустить тесты под Linux (изпользуется стандарт POSIX)
-      ```
+      ```bash
       ../tests$ g++ -std=c++11 tests.cpp -o tests
       ../tests$ ./tests
       ```
     - Или самостоятельно запустить конкретный тест, например:
-      ```
+      ```bash
       ../tests$ ./main algo/01.program <algo/01.in
       ```
 
@@ -47,6 +47,7 @@
 - `main.cpp` - точка входа в проект
 - `cfg.h` - заголовочный файл с объявлением фундаментальных типов
 - `node.h` - заголовочный файл с объявлением структуры вершины абстрактного дерева разбора
+- `error_handler.*` - обработчик ошибок
 - `dictionary.*` - реализация словаря для хранения значений всех переменных
 - `expression.*` - реализация интерфейса для работы со всеми математическими выражениями
 - `interpreter.*` - точка входа парсера и интерпретатора
@@ -70,13 +71,9 @@
 
 ## TODO
 
-- убрать запуск из compile.sh
-  - добавить скрипт для запуска в src?
-
-- описание грамматики
-- вынести error catchers
+- добавить скрипт для запуска в src?
 
 - кидать рантайм ошибки
-- ошибки компиляции
+- тесты!!
 
 - унарный минус в грамматику

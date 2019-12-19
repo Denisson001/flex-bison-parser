@@ -1,4 +1,5 @@
 %{
+    #include "error_handler.h"
     #include "node.h"
 
     /*
@@ -11,7 +12,10 @@
      */
     #include "grammar.tab.h"
 
-   void yyerror(TOperations* ast_root, char* errmsg);
+    /*
+     * Регистрация обработчика ошибок лексера
+     */
+    TErrorHandler lexer_error_handler("Lexer");
 %}
 
 
@@ -51,8 +55,8 @@ len                      { return _LEN_FUNC; }
 <STRING_MODE>[^\\\n"]+   { yylval.string += yytext; }
 <STRING_MODE>\\n         { yylval.string += '\n'; }
 <STRING_MODE>\\["]       { yylval.string += '"'; }
-<STRING_MODE>\\          { yyerror(NULL, "Invalid escape sequence"); }
-<STRING_MODE>\n          { yyerror(NULL, "Newline in string literal"); }
+<STRING_MODE>\\          { lexer_error_handler.handleCompilationError("Invalid escape sequence", yylineno); }
+<STRING_MODE>\n          { lexer_error_handler.handleCompilationError("Newline in string literal", yylineno); }
 <STRING_MODE>["]         {
                            BEGIN(INITIAL);
                            return _STRING;
@@ -72,6 +76,8 @@ len                      { return _LEN_FUNC; }
 
 [ \t\r\n]                ;                                       // Убирает все пробельные символы из программмы
 
-.                        { yyerror(NULL, "Invalid character"); } // Остальные символы вызывают ошибку компиляции
+.                        {                                       // Остальные символы вызывают ошибку компиляции
+                           lexer_error_handler.handleCompilationError("Invalid character", yylineno);
+                         }
 
 %%
