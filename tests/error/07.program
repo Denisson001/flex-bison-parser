@@ -1,0 +1,4 @@
+{
+    string_s = "0123456789";
+    string_s[len(string_s)] = "0";
+}

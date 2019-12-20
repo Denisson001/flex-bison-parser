@@ -1,3 +1,4 @@
+#include <exception>
 #include <variant>
 
 #include "expression.h"
@@ -137,40 +138,60 @@ TExprFunction<VariableType>::TExprFunction(const function_t& function_name, cons
 /*
  * Есть только одна функция, которая возвращает number_t
  * len(string_expr) - возвращает длину строки
+ * Есть проверка корректности вызова
  */
 template <>
-number_t TExprFunction<number_t >::calculate(TDictionary& dictionary) {      /// ПРОВЕРКА КОРРЕКТНОСТИ !!!!!!!!!!!!!
+number_t TExprFunction<number_t >::calculate(TDictionary& dictionary) {
     if (_function_name == "len") {
         if (_string_expressions.size() < 1) {
-            return {};
+            throw std::invalid_argument("invalid args number");
         }
         return _string_expressions[0]->calculate(dictionary).size();
     }
-    return {};
+    throw std::logic_error("invalid function name");
 }
 
 /*
  * Есть две функции, которые возвращают string_t
  * slice - string_expr[number_expr : number_expr] - возвращает подстроку
  * index - string_expr[index] - возвращает элемент строки по индексу
+ * Есть проверка корректности вызова
  */
 template <>
 string_t TExprFunction<string_t>::calculate(TDictionary& dictionary) {
     if (_function_name == "slice") {
         if (_string_expressions.size() < 1 || _number_expressions.size() < 2) {
-            return {};
+            throw std::invalid_argument("invalid args number");
         }
+
         const auto left_border  = _number_expressions[0]->calculate(dictionary);
-        const auto right_border = std::max(left_border, _number_expressions[1]->calculate(dictionary));
-        return _string_expressions[0]->calculate(dictionary).substr(left_border, right_border - left_border + 1); // ошибки?
+        const auto right_border = _number_expressions[1]->calculate(dictionary);
+        const auto string       = _string_expressions[0]->calculate(dictionary);
+
+        if (left_border  > right_border   ||
+            right_border >= string.size() ||
+            left_border  < 0) {
+            throw std::out_of_range("slice function: invalid borders");
+        }
+
+        return string.substr(left_border, right_border - left_border + 1);
+
     } else if (_function_name == "index") {
         if (_string_expressions.size() < 1 || _number_expressions.size() < 1) {
-            return {};
+            throw std::invalid_argument("invalid args number");
         }
-        const auto index = _number_expressions[0]->calculate(dictionary);
-        return string_t(1, _string_expressions[0]->calculate(dictionary)[index]); // ошибки?
+
+        const auto index  = _number_expressions[0]->calculate(dictionary);
+        const auto string = _string_expressions[0]->calculate(dictionary);
+
+        if (index >= string.size() ||
+            index <  0) {
+            throw std::out_of_range("slice function: invalid index");
+        }
+
+        return string_t(1, string[index]);
     }
-    return {};
+    throw std::logic_error("invalid function name");
 }
 
 /*
@@ -179,18 +200,20 @@ string_t TExprFunction<string_t>::calculate(TDictionary& dictionary) {
  * "==", "!=", "<=", ">=", "<", ">" - логические функции
  * Выражения по обе стороны от оператора должны совпадать и могут быть number_t или string_t
  * Чтобы не разбирать случаи используется std::variant
+ * Есть проверка корректности вызова
  */
 template <>
 bool_t TExprFunction<bool_t>::calculate(TDictionary& dictionary) {
     if (_function_name == "!") {
         if (_bool_expressions.size() < 1) {
-            return {};
+            throw std::invalid_argument("invalid args number");
         }
         return !_bool_expressions[0]->calculate(dictionary);
     }
 
     std::variant<number_t, string_t> left_value;
     std::variant<number_t, string_t> right_value;
+
     if (_number_expressions.size() >= 2) {
         left_value = _number_expressions[0]->calculate(dictionary);
         right_value = _number_expressions[1]->calculate(dictionary);
@@ -200,7 +223,7 @@ bool_t TExprFunction<bool_t>::calculate(TDictionary& dictionary) {
         right_value = _string_expressions[1]->calculate(dictionary);
 
     } else {
-        return {};
+        throw std::invalid_argument("invalid args number");
     }
 
     if (_function_name == "==") {
@@ -222,5 +245,5 @@ bool_t TExprFunction<bool_t>::calculate(TDictionary& dictionary) {
         return left_value > right_value;
     }
 
-    return {};
+    throw std::logic_error("invalid function name");
 }

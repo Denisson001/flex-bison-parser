@@ -18,5 +18,8 @@ public:
     bool operator<(const TVariable<VariableType>& other_variable) const;
 
 private:
+    /*
+     * Имя переменной
+     */
     variable_t _variable_name;
 };

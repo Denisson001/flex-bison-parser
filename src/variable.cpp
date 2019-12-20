@@ -8,6 +8,7 @@
 template class TVariable<number_t>;
 template class TVariable<string_t>;
 
+
 template <typename VariableType>
 TVariable<VariableType>::TVariable()
 {}

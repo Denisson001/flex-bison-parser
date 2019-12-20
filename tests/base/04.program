@@ -1,18 +1,18 @@
 {
-    read(n);
-    read(first_element);
-    min = first_element;
-    max = first_element;
-    while (n - 1 > 0) {
-        read(element);
-        if (element < min) {
-            min = element;
-        }
-        if (element > max) {
-            max = element;
-        }
-        n = n - 1;
+    x = 5;
+    if (x * 3 + 7 == 22) {
+        print(1);
+    } else {
+        print(2);
     }
-    print(min);
-    print(max);
+
+    if (5 + x / 2 == 5) {
+        print(1);
+    } else {
+        print(2);
+    }
+
+    if (28 == 7 * 4) {
+        print(3);
+    }
 }

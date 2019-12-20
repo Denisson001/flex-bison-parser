@@ -88,7 +88,11 @@ TIndexAssign::TIndexAssign(const TVariable<string_t>& variable, TNumberExpressio
  */
 void TIndexAssign::execute(TDictionary& dictionary) {
     const auto index = _index_expression->calculate(dictionary);
-    dictionary[_variable][index] = _expression->calculate(dictionary)[0];        //!!!!!!!!!!!!!!!!!!! ПРОВЕРКА НА КОРРЕКТНОСТЬ!!!!!!!!!!!!!!!!!!!!!!!
+    if (index >= dictionary[_variable].size() ||
+        index < 0) {
+        throw std::out_of_range("index assignment: invalid index");
+    }
+    dictionary[_variable][index] = _expression->calculate(dictionary)[0];
 }
 
 

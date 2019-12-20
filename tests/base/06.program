@@ -1,20 +1,6 @@
 {
-    read(line_s);
-    flag = 1;
-    while (k < len(line_s) && flag == 1) {
-        if (line_s[k] == "(") {
-            sum = sum + 1;
-        } else {
-            sum = sum - 1;
-        }
-        if (sum < 0) {
-            flag = 0;
-        }
-        k = k + 1;
-    }
-    if (flag == 1 && sum == 0) {
-        print("True");
-    } else {
-        print("False");
-    }
+    x = 5;
+    y = 11;
+    print(x + y * (x + 22 /y) - x * x * y / x + (y % x));
+    print(((((((x + y)))))));
 }
