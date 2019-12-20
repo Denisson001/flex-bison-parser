@@ -12,7 +12,7 @@ extern int yylineno;
 /*
  * Обработчик ошибок парсера Bison
  */
-void yyerror(TOperations* ast_root, TErrorHandler* error_handler, char* error_message) {
+void yyerror(TOperations* ast_root, TErrorHandler* error_handler, const char* error_message) {
     error_handler->handleCompilationError(error_message, yylineno);
 }
 

@@ -9,10 +9,15 @@
     #define YYSTYPE TNode
 
     /*
+     * Bison начинает генерировать более подробные сообщения об ошибке
+     */
+    #define YYERROR_VERBOSE
+
+    /*
      * Используется в генерируемых файлах
      */
     extern int yylex();
-    extern void yyerror(TOperations* ast_root, TErrorHandler* error_handler, char* error_message);
+    extern void yyerror(TOperations* ast_root, TErrorHandler* error_handler, const char* error_message);
 %}
 
 
@@ -47,7 +52,7 @@
 /*
  * Нетерминалы, используемые в разоборе математических выражений разных типов
  */
-%type<number_expression> NUMBER_EXPR ADD_EXPR    MULT_EXPR  MOD_EXPR    NUMBER_TERM
+%type<number_expression> NUMBER_EXPR ADD_EXPR    MULT_EXPR  MOD_EXPR    BRACKET_EXPR NUMBER_TERM
 %type<string_expression> STRING_EXPR CONCAT_EXPR SLICE_EXPR STRING_TERM
 %type<bool_expression>   BOOL_EXPR   OR_EXPR     AND_EXPR   BOOL_TERM
 
@@ -206,37 +211,46 @@ NUMBER_VAR:    _NUMBER_VAR                           { $$ = yylval.number_variab
 
 /*
  * NUMBER_EXPR - числовое выражение
- * Учитывается сложение и разность
+ * Учитывается унарный минус
  */
-NUMBER_EXPR:   NUMBER_EXPR '+' ADD_EXPR              { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::PLUS); }
-|              NUMBER_EXPR '-' ADD_EXPR              { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MINUS); }
+NUMBER_EXPR:   '-' ADD_EXPR                          { $$ = std::make_shared< TExpression<number_t> >(std::make_shared< TExprValue<number_t> >(0), $2, ENumberOperator::MINUS); }
 |              ADD_EXPR                              { $$ = $1; }
 ;
 
 
 /*
- * ADD_EXPR - слагаемое числового выражения
- * Учитывается умножение и деление
+ * ADD_EXPR - числовое выражение
+ * Учитывается сложение и разность
  */
-ADD_EXPR:      ADD_EXPR '*' MULT_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MULT); }
-|              ADD_EXPR '/' MULT_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::DIV); }
+ADD_EXPR:      ADD_EXPR '+' MULT_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::PLUS); }
+|              ADD_EXPR '-' MULT_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MINUS); }
 |              MULT_EXPR                             { $$ = $1; }
 ;
 
 
 /*
- * MULT_EXPR - множитель числового выражения
- * Учитывается взятие по модулю
+ * MULT_EXPR - числовое выражение
+ * Учитывается умножение и деление
  */
-MULT_EXPR:     MULT_EXPR '%' MOD_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MOD); }
+MULT_EXPR:     MULT_EXPR '*' MOD_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MULT); }
+|              MULT_EXPR '/' MOD_EXPR                { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::DIV); }
 |              MOD_EXPR                              { $$ = $1; }
 ;
 
 
 /*
- * MOD_EXPR - нетерминал числового выражения для обработки навешивания скобок или ухода на числовой терм
+ * MOD_EXPR - числовое выражение
+ * Учитывается взятие по модулю
  */
-MOD_EXPR:      '(' NUMBER_EXPR ')'                   { $$ = $2; }
+MOD_EXPR:      MOD_EXPR '%' BRACKET_EXPR             { $$ = std::make_shared< TExpression<number_t> >($1, $3, ENumberOperator::MOD); }
+|              BRACKET_EXPR                          { $$ = $1; }
+;
+
+
+/*
+ * BRACKET_EXPR - нетерминал числового выражения для обработки навешивания скобок или ухода на числовой терм
+ */
+BRACKET_EXPR:  '(' NUMBER_EXPR ')'                   { $$ = $2; }
 |              NUMBER_TERM                           { $$ = $1; }
 ;
 

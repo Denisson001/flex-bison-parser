@@ -3,4 +3,6 @@
     y = 11;
     print(x + y * (x + 22 /y) - x * x * y / x + (y % x));
     print(((((((x + y)))))));
+    print(-1);
+    print(-2 + (-1));
 }

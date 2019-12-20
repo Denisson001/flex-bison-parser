@@ -1,15 +1,21 @@
 {
-    read(value);
-    i = 2;
-    while (i * i <= value && flag == 0) {
-        if (value % i == 0) {
-            flag = 1;
-        }
-        i = i + 1;
+    a = 10;
+    b = 11;
+    c = 12;
+
+    if (a < b && b < c) {
+        print(1);
     }
-    if (flag == 1) {
-        print("False");
-    } else {
-        print("True");
+
+    if (a < b || c < b) {
+        print(2);
+    }
+
+    if (!(a < b && c < b)) {
+        print(3);
+    }
+
+    if (!(a >= c)) {
+        print(4);
     }
 }

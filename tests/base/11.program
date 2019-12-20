@@ -1,27 +1,29 @@
 {
-    read(n);
-    while (k < n + 1) {
-        prime_s = prime_s + "1";
-        k = k + 1;
+    a = 5;
+    b = a;
+    c = 6;
+
+    if (a == b) {
+        print(1);
     }
 
-    i = 2;
-    while (i <= n) {
-        if (prime_s[i] == "1") {
-            j = i * 2;
-            while (j <= n) {
-                prime_s[j] = "0";
-                j = j + i;
-            }
-        }
-        i = i + 1;
+    if (a != b) {
+        print(2);
     }
 
-    k = 2;
-    while (k < len(prime_s)) {
-        if (prime_s[k] == "1") {
-            print(k);
-        }
-        k = k + 1;
+    if (a < c) {
+        print(3);
+    }
+
+    if (a <= b) {
+        print(4);
+    }
+
+    if (a > b) {
+        print(5);
+    }
+
+    if (a >= b) {
+        print(6);
     }
 }

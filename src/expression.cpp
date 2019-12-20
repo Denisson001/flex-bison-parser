@@ -47,13 +47,23 @@ number_t TExpression<number_t>::calculate(TDictionary& dictionary) {
     switch (_operation.type) {
         case PLUS:
             return left_result + right_result;
+
         case MINUS:
             return left_result - right_result;
+
         case MULT:
             return left_result * right_result;
+
         case DIV:
+            if (right_result == 0) {
+                throw std::domain_error("Division by zero");
+            }
             return left_result / right_result;
+
         case MOD:
+            if (right_result == 0) {
+                throw std::domain_error("Division by zero");
+            }
             return left_result % right_result;
     }
     return {};
@@ -81,6 +91,7 @@ bool_t TExpression<bool_t>::calculate(TDictionary& dictionary) {
     switch (_operation.type) {
         case AND:
             return left_result && right_result;
+
         case OR:
             return left_result || right_result;
     }

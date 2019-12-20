@@ -1,15 +1,28 @@
 {
-    read(value);
-    i = 2;
-    while (i * i <= value && flag == 0) {
-        if (value % i == 0) {
-            flag = 1;
+    read(a);
+    read(a_s);
+
+    b = 5 - a;
+    b_s = "abacaba";
+
+    if (a_s == b_s) {
+        if (a + b == 5) {
+            print("1");
         }
-        i = i + 1;
-    }
-    if (flag == 1) {
-        print("False");
     } else {
-        print("True");
+        a_s[0] = b_s[1];
     }
+
+    while (k < a && b < a) {
+        k = k + 1;
+        b = b + 1;
+    }
+
+    a = len(a_s) / 2;
+    a_s = (a_s + a_s + a_s)[5:5 + a];
+
+    a_s = a_s[0:len(a_s) - 1][0:len(a_s) - 1][0:len(a_s) - 1];
+
+    print(a);
+    print(a_s);
 }
