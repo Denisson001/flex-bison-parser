@@ -12,7 +12,7 @@
     ../src$ bison -d grammar.y
     ../src$ lex lexer.lex
     ../src$ g++ -std=c++17 grammar.tab.c lex.yy.c interpreter.cpp \
-            error_handler.cpp operation.cpp operator.cpp expression.cpp \ 
+            error_handler.cpp operation.cpp operator.cpp expression.cpp \
             dictionary.cpp variable.cpp main.cpp -o main
     ```
 - Запустить интерпретатор
@@ -37,6 +37,12 @@
       ```bash
       ../tests$ ./main algo/01.program <algo/01.in
       ```
+
+## Comments
+
+- Примеры программ можно посмотреть в тестах `/tests/algo/*.program`
+- Более подробно грамматику можно посмотреть в `/src/grammar.y`
+- Язык со строгой типизацией. Тип определяется суффиксом переменной. Если переменная имеет вид `*_s`, то это строковая переменная, иначе числовая.
 
 ## Project
 
@@ -72,7 +78,3 @@
   - `01.program` - код интерпретируемой программы
   - `01.desc` - описание теста
 
-## TODO
-
-- добавить скрипт для запуска в src?
-- немного описание проекта
